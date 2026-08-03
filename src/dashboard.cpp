@@ -1,0 +1,45 @@
+#include "dashboard.h"
+#include "TFT_eSPI.h"
+#include "fonts.h"
+
+
+char timeString [6] = "XX:XX";
+unsigned long time = 0;
+char hourString [3] = "00";
+char minuteString [3] = "00";
+
+void setFont(GFXfont &font, Epaper &epaper){
+    epaper.setTextFont(font);
+}
+
+
+void setTime (char newhour [3], char newminute [3]){
+    strcpy(hourString, newhour);
+    strcpy(minuteString, newminute);
+}
+
+void drawTime(EPaper &epaper){
+    epaper.setTextDatum(TR_DATUM);
+    epaper.setFreeFont(&InterTight_VariableFont_wght24pt7b);
+    epaper.drawString(timeString, epaper.width() - 40, 40);
+    epaper.updataPartial(epaper.width() - 40, 40, epaper.textWidth(timeString), epaper.fontHeight());
+}
+
+void updateTime (EPaper &epaper){
+    if (millis()-time >= 60000){
+        time = millis();
+        if(atoi(minuteString) != 59){
+            snprintf(minuteString, sizeof(minuteString), "%02d", atoi(minuteString) + 1);    
+        } else{
+            strcpy(minuteString, "00");
+            if(atoi(hourString) != 23){
+                snprintf(hourString, sizeof(hourString), "%02d", atoi(hourString) + 1);    
+            } else{
+                strcpy(hourString, "00");
+            }
+        }
+        snprintf(timeString, sizeof(timeString), "%s:%s", hourString, minuteString);
+        drawTime(epaper);
+    }
+}
+
