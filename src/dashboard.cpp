@@ -1,15 +1,15 @@
 #include "dashboard.h"
 #include "TFT_eSPI.h"
 #include "fonts.h"
-
+#//test
 
 char timeString [6] = "XX:XX";
-unsigned long time = 0;
+unsigned long lastTime = 0;
 char hourString [3] = "00";
 char minuteString [3] = "00";
 
-void setFont(GFXfont &font, Epaper &epaper){
-    epaper.setTextFont(font);
+void setFont(const GFXfont* &font, EPaper &epaper){
+    epaper.setFreeFont(font);
 }
 
 
@@ -26,8 +26,8 @@ void drawTime(EPaper &epaper){
 }
 
 void updateTime (EPaper &epaper){
-    if (millis()-time >= 60000){
-        time = millis();
+    if (millis() -lastTime >= 60000){
+        lastTime = millis();
         if(atoi(minuteString) != 59){
             snprintf(minuteString, sizeof(minuteString), "%02d", atoi(minuteString) + 1);    
         } else{
