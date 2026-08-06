@@ -2,7 +2,24 @@
 #include "fonts.h"
 #include "dashboard.h"
 
-unsigned int shrimpCMD(uint8_t cmdArray[255], EPaper &epaper){
+/*  Commands:
+      0x00: Help
+      0x01: SetFont
+      0x02: DrawString
+      0x03: SetTime
+    Statuscodes sent on Return:
+      -1: At least one command not recognized
+      0: Sent HTTP with commandlist of this specific project to Client (Help)
+      1: OK, nothing to do
+*/
+
+
+/// @brief function to handle shrimp-protocol
+/// @param cmdArray byte array containing CommandID, CommandLength, and Data
+/// @param epaper reference to the used epaper-display
+/// @return a int8_t representing the status of the commandexecution
+/// @note for epaper always use the initialized epaper from main.cpp
+int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper){
     uint8_t cmdLength = cmdArray[0];
     uint8_t cmd = cmdArray[1];
     String text = "";

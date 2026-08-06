@@ -42,9 +42,9 @@ void setup() {
   server.begin();
   // Start up EPaper and flush the screen
   epaper.begin();
-  epaper.setTextSize(2);
+  epaper.setTextSize(1);
   epaper.fillScreen(TFT_WHITE);
-  epaper.drawString(WiFi.localIP().toString(),64,64);
+  epaper.setFreeFont(&PlayfairDisplay_VariableFont_wght18pt7b);
   epaper.update();
 }
 

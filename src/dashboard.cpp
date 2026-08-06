@@ -18,19 +18,36 @@ void setTime (char newhour [3], char newminute [3]){
     strcpy(minuteString, newminute);
 }
 
-void drawPartial(EPaper &epaper, String text, int x, int y){
+/// @brief draws a String and partially updates used space
+/// @param epaper reference to the used epaper-display
+/// @param text String to draw
+/// @param x x-coordinate to draw to
+/// @param y y-coordinate to draw to
+/// @note for epaper always use the initialized epaper from main.cpp
+void drawPartial(EPaper &epaper, String text, unsigned int x, unsigned int y){
     epaper.setTextDatum(TL_DATUM);
     epaper.drawString(text, x, y);
     epaper.updataPartial(x, y, epaper.textWidth(text), epaper.fontHeight());
 }
 
-void drawTime(EPaper &epaper){
+/// @brief draws the current time on screen
+/// @param epaper reference to the used epaper-display
+/// @param partialUpdate optionally refreshes the used displaypart
+/// @note for epaper always use the initialized epaper from main.cpp
+void drawTime(EPaper &epaper, bool partialUpdate){
+    uint8_t prevDatum = epaper.getTextDatum();
     epaper.setTextDatum(TR_DATUM);
-    epaper.setFreeFont(&InterTight_VariableFont_wght24pt7b);
+    epaper.setFreeFont(&InterTight_VariableFont_wght12pt7b);
     epaper.drawString(timeString, epaper.width() - 40, 40);
-    epaper.updataPartial(epaper.width() - 40, 40, epaper.textWidth(timeString), epaper.fontHeight());
+    epaper.setTextDatum(prevDatum);
+    if(partialUpdate){
+        epaper.updataPartial(epaper.width() - 40, 40, epaper.textWidth(timeString), epaper.fontHeight());
+    };
 }
 
+/// @brief checks/updates time, then draws it and updates the screen
+/// @param epaper reference to the used epaper-display
+/// @note for epaper always use the initialized epaper from main.cpp
 void updateTime (EPaper &epaper){
     if (millis() -lastTime >= 60000){
         lastTime = millis();
@@ -45,7 +62,7 @@ void updateTime (EPaper &epaper){
             }
         }
         snprintf(timeString, sizeof(timeString), "%s:%s", hourString, minuteString);
-        drawTime(epaper);
+        drawTime(epaper, true);
     }
 }
 
