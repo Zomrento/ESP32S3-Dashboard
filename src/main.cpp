@@ -105,29 +105,55 @@ void loop(){
               uint16_t bodyLengthCounter = 0;
               uint8_t command[255];
               command[0] += client.read();
+              int shrimpStatus = 1;
               while(bodyLengthCounter < contentLength){
                 // command + 1 should be the address of command[1] so the CMDLength in [0] is kept untouched 
                 client.readBytes(command+1, command[0]);
                 // command[0]+1 = (DATALENGTH + CMDBYTE) + CMDLENGTHBYTE
                 bodyLengthCounter += command[0]+1;
-                shrimpCMD(command, epaper);
+                /*  Commands:
+                      0x00: Help
+                      0x01: SetFont
+                      0x02: DrawString
+                      0x03: SetTime
+                    Statuscodes sent on Return:
+                     -1: At least one command not recognized
+                      0: Sent HTTP with commandlist of this specific project to Client (Help)
+                      1: OK, nothing to do
+                */
+                int shrimpReturn = shrimpCMD(command, epaper);
+                if (shrimpReturn < shrimpStatus){
+                  shrimpStatus = shrimpReturn;
+                }                
               }
-              client.println("HTTP/1.1 200 OK");
-              client.println("Content-Type: text/plain");
-              client.println("Content-Length: 16");            
-              client.println("Connection: close");
-              client.println();
-              client.println("Request received");
-              break;
-            }
-            else{
-              client.println("HTTP/1.1 400 Bad Request");
-              client.println("Content-Type: text/plain");
-              client.println("Content-Length: 18");            
-              client.println("Connection: close");
-              client.println();
-              client.println("Invalid Operation");
-              break;
+              switch (shrimpStatus){
+                case 1:
+                  client.println("HTTP/1.1 200 OK");
+                  client.println("Content-Type: text/plain");
+                  client.println("Content-Length: 16");            
+                  client.println("Connection: close");
+                  client.println();
+                  client.println("Request received");
+                  break;
+                case 0:
+                  break;
+                default:
+                  client.println("HTTP/1.1 400 Bad Request");
+                  client.println("Content-Type: text/plain");
+                  client.println("Content-Length: 18");            
+                  client.println("Connection: close");
+                  client.println();
+                  client.println("Invalid Operation");
+                  break;
+              }
+            } else {
+                client.println("HTTP/1.1 400 Bad Request");
+                client.println("Content-Type: text/plain");
+                client.println("Content-Length: 15");            
+                client.println("Connection: close");
+                client.println();
+                client.println("Unsupported Content-Type");
+                break;
             }
           }
         }

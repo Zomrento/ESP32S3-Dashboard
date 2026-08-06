@@ -1,1 +1,1 @@
-void shrimpCMD(uint8_t cmdArray[255], EPaper &epaper);
+int shrimpCMD(uint8_t cmdArray[255], EPaper &epaper);

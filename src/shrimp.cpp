@@ -2,7 +2,7 @@
 #include "fonts.h"
 #include "dashboard.h"
 
-int shrimpCMD(uint8_t cmdArray[255], EPaper &epaper){
+unsigned int shrimpCMD(uint8_t cmdArray[255], EPaper &epaper){
     uint8_t cmdLength = cmdArray[0];
     uint8_t cmd = cmdArray[1];
     String text = "";
@@ -71,6 +71,6 @@ int shrimpCMD(uint8_t cmdArray[255], EPaper &epaper){
         return 1;
       }
       default:
-        return 0;
+        return -1;
     }
 }
