@@ -88,7 +88,7 @@ void loop(){
         }
         else{
           if (contentLength != 0)  {
-            /* To spontainiously display small changes on the dashboard I make some commands
+            /* To directly display small changes on the dashboard I make some commands
                callable over http. (Also as an excercise, because I never did this before.)
                NOTE: For selfdefined protocols the prefixes:
                     application/.vnd- (vendor)
@@ -98,7 +98,7 @@ void loop(){
                     I choose for my own small protocol-exercise the name application/x-shrimp
                     Commands will arrive in the format CMDLENGTH CMDID DATA*
                     CMDLENGTH tells the receiver how many bytes AFTER CMDLENGTH still belong to that command. (So DATA.length() + 1 to account for the CMD-Byte)
-                    CMDID identifies the command (Example: 0x01 means drawString, 0x02 means setFont)
+                    CMDID identifies the command (Example: 0x01 means setFont, 0x02 means drawString)
                     DATA contain for the command neccesary additionaly information, (Example: Text, (x,y)-coordinates)
             */
             if(header.indexOf("Content-Type: application/x-shrimp")){
