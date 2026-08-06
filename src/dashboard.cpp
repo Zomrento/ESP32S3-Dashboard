@@ -1,7 +1,7 @@
 #include "dashboard.h"
 #include "TFT_eSPI.h"
 #include "fonts.h"
-#//test
+//test
 
 char timeString [6] = "XX:XX";
 unsigned long lastTime = 0;
@@ -16,6 +16,12 @@ void setFont(const GFXfont* &font, EPaper &epaper){
 void setTime (char newhour [3], char newminute [3]){
     strcpy(hourString, newhour);
     strcpy(minuteString, newminute);
+}
+
+void drawPartial(EPaper &epaper, String text, int x, int y){
+    epaper.setTextDatum(TL_DATUM);
+    epaper.drawString(text, x, y);
+    epaper.updataPartial(x, y, epaper.textWidth(text), epaper.fontHeight());
 }
 
 void drawTime(EPaper &epaper){
