@@ -5,6 +5,7 @@
 #include "fonts.h"
 #include "dashboard.h"
 #include "shrimp.h"
+#include "widgets.h"
 
 // Set up EPaper object
 EPaper epaper;
@@ -22,6 +23,8 @@ unsigned long previousTime = 0;
 const long timeoutTime = 2000;
 // Mockdata
 const char* something = "Owo";
+
+TodoWidget todoWidget;
 
 void setup() {
   Serial.begin(115200);
