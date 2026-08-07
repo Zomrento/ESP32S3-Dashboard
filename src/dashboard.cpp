@@ -1,12 +1,11 @@
 #include "dashboard.h"
-#include "TFT_eSPI.h"
 #include "fonts.h"
-//test
 
 char timeString [6] = "XX:XX";
 unsigned long lastTime = 0;
 char hourString [3] = "00";
 char minuteString [3] = "00";
+uint8_t minCountDown = 10;
 
 void setFont(const GFXfont* &font, EPaper &epaper){
     epaper.setFreeFont(font);
@@ -48,7 +47,7 @@ void drawTime(EPaper &epaper, bool partialUpdate){
 /// @brief checks/updates time, then draws it and updates the screen
 /// @param epaper reference to the used epaper-display
 /// @note for epaper always use the initialized epaper from main.cpp
-void updateTime (EPaper &epaper){
+void updateTime (EPaper &epaper, WidgetMaster &widgetMaster){
     if (millis() -lastTime >= 60000){
         lastTime = millis();
         if(atoi(minuteString) != 59){
@@ -62,7 +61,15 @@ void updateTime (EPaper &epaper){
             }
         }
         snprintf(timeString, sizeof(timeString), "%s:%s", hourString, minuteString);
-        drawTime(epaper, true);
+        minCountDown--;
+        if(minCountDown == 0){
+            minCountDown = 10;
+            widgetMaster.cycleWidget(epaper);
+        }
+        else{
+            drawTime(epaper, true);
+        }
+        
     }
 }
 

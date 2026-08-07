@@ -1,9 +1,6 @@
-#include "TFT_eSPI.h"
-#include "dashboard.h"
 #include "widgets.h"
+#include "dashboard.h"
 #include "fonts.h"
-
-
 
 void TodoWidget::drawWidget(EPaper &epaper){
     epaper.fillScreen(TFT_WHITE);
@@ -49,6 +46,7 @@ void LuomiWidget::drawWidget(EPaper &epaper){
         epaper.drawString(quote, epaper.width()/2, epaper.height()/2);
     }
     epaper.setTextDatum(prev);
+    drawTime(epaper);
     epaper.update();
 }
 
@@ -58,8 +56,54 @@ LuomiWidget::LuomiWidget(){
     quote = "";
 }
 
-LuomiWidget::LuomiWidget(int8_t _id, String _quote, EPaper &epaper){
+LuomiWidget::LuomiWidget(int8_t _id, String _quote){
     id = _id;
     type = LUOMI_QUOTE;
     quote = _quote;
+}
+
+void StartUpWidget::drawWidget(EPaper &epaper){
+    int8_t prev = epaper.getTextDatum();
+    epaper.setTextDatum(MC_DATUM);
+    epaper.fillScreen(TFT_WHITE);
+    epaper.drawString("STARTUP", epaper.width()/2, epaper.height()/2);
+    epaper.setTextDatum(prev);
+    drawTime(epaper);
+    epaper.update();
+}
+
+StartUpWidget::StartUpWidget(){
+    id = -1;
+    type = STARTUP;
+}
+
+StartUpWidget::StartUpWidget(int8_t _id){
+    id = _id;
+    type = STARTUP;
+}
+
+void WidgetMaster::cycleWidget(EPaper &epaper){
+    switch(current->type){
+        case STARTUP:
+            current = &luomiwidget;
+            break;
+        case LUOMI_QUOTE:
+            current = &todowidget;
+            break;
+        case TODO_LIST:
+            current = &luomiwidget;
+            break;
+        default:
+            current = &startupwidget;
+    }
+    current->drawWidget(epaper);
+}
+
+WidgetMaster::WidgetMaster(){
+    startupwidget = StartUpWidget(0);
+    luomiwidget = LuomiWidget();
+    luomiwidget.id = 1;
+    todowidget = TodoWidget();
+    todowidget.id = 2;
+    current = &startupwidget;
 }

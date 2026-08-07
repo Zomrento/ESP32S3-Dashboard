@@ -24,7 +24,7 @@ const long timeoutTime = 2000;
 // Mockdata
 const char* something = "Owo";
 
-TodoWidget todoWidget;
+WidgetMaster widgetMaster = WidgetMaster();
 
 void setup() {
   Serial.begin(115200);
@@ -53,7 +53,6 @@ void setup() {
 
 void loop(){
   WiFiClient client = server.available();   // Listen for incoming clients
-
   if (client) {                             // If a new client connects,
     currentTime = millis();
     previousTime = currentTime;
@@ -169,4 +168,5 @@ void loop(){
     Serial.println("Client disconnected.");
     Serial.println("");
   }
+  updateTime(epaper, widgetMaster);
 }
