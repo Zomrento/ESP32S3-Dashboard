@@ -13,7 +13,6 @@ EPaper epaper;
 WiFiServer server(80);
 // Variable to store the HTTP request
 String header;
-String body;
 boolean header_finished;
 // Current time
 unsigned long currentTime = millis();
@@ -21,8 +20,6 @@ unsigned long currentTime = millis();
 unsigned long previousTime = 0; 
 // Define timeout time in milliseconds (example: 2000ms = 2s)
 const long timeoutTime = 2000;
-// Mockdata
-const char* something = "Owo";
 
 WidgetMaster widgetMaster = WidgetMaster();
 
@@ -47,8 +44,8 @@ void setup() {
   epaper.begin();
   epaper.setTextSize(1);
   epaper.fillScreen(TFT_WHITE);
-  epaper.setFreeFont(&PlayfairDisplay_VariableFont_wght18pt7b);
-  epaper.update();
+  widgetMaster.current = &widgetMaster.luomiwidget;
+  widgetMaster.drawCurrent(epaper);
 }
 
 void loop(){
@@ -123,7 +120,7 @@ void loop(){
                       0: Sent HTTP with commandlist of this specific project to Client (Help)
                       1: OK, nothing to do
                 */
-                int shrimpReturn = shrimpCMD(command, epaper);
+                int shrimpReturn = shrimpCMD(command, epaper, widgetMaster);
                 if (shrimpReturn < shrimpStatus){
                   shrimpStatus = shrimpReturn;
                 }                

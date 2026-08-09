@@ -42,5 +42,6 @@ struct WidgetMaster {
     TodoWidget todowidget;
     LuomiWidget luomiwidget;
     void cycleWidget(EPaper &epaper);
+    void drawCurrent(EPaper &epaper);
     WidgetMaster();
 };

@@ -5,10 +5,20 @@ char timeString [6] = "XX:XX";
 unsigned long lastTime = 0;
 char hourString [3] = "00";
 char minuteString [3] = "00";
-uint8_t minCountDown = 10;
+uint8_t minInterval = 10;
+uint8_t minCountDown = minInterval;
+
 
 void setFont(const GFXfont* &font, EPaper &epaper){
     epaper.setFreeFont(font);
+}
+void setCountdown(uint8_t _minCountdown){
+    uint8_t minCountDown = _minCountdown;
+}
+
+void setCountdownInterval(uint8_t _minInterval){
+    minInterval = _minInterval;
+    setCountdown(minInterval);
 }
 
 
@@ -37,11 +47,15 @@ void drawTime(EPaper &epaper, bool partialUpdate){
     uint8_t prevDatum = epaper.getTextDatum();
     epaper.setTextDatum(TR_DATUM);
     epaper.setFreeFont(&InterTight_VariableFont_wght12pt7b);
-    epaper.drawString(timeString, epaper.width() - 40, 40);
-    epaper.setTextDatum(prevDatum);
+    epaper.fillRect(epaper.width() - 20 - epaper.textWidth("XX:XX"), 0, epaper.textWidth("XX:XX"), epaper.fontHeight(), TFT_WHITE);
     if(partialUpdate){
-        epaper.updataPartial(epaper.width() - 40, 40, epaper.textWidth(timeString), epaper.fontHeight());
+        epaper.fillRect(epaper.width() - 20 - epaper.textWidth("XX:XX"), 0, epaper.textWidth("XX:XX"), epaper.fontHeight(), TFT_WHITE);
+        epaper.updataPartial(epaper.width() - 20 - epaper.textWidth("XX:XX"), 0, epaper.textWidth("XX:XX"), epaper.fontHeight());
+        epaper.drawString(timeString, epaper.width() - 20, 0);
+        epaper.updataPartial(epaper.width() - 20 - epaper.textWidth("XX:XX"), 0, epaper.textWidth("XX:XX"), epaper.fontHeight());
     };
+    epaper.drawString(timeString, epaper.width() - 20, 0);
+    epaper.setTextDatum(prevDatum);
 }
 
 /// @brief checks/updates time, then draws it and updates the screen
@@ -49,7 +63,7 @@ void drawTime(EPaper &epaper, bool partialUpdate){
 /// @note for epaper always use the initialized epaper from main.cpp
 void updateTime (EPaper &epaper, WidgetMaster &widgetMaster){
     if (millis() -lastTime >= 60000){
-        lastTime = millis();
+        lastTime += 60000;
         if(atoi(minuteString) != 59){
             snprintf(minuteString, sizeof(minuteString), "%02d", atoi(minuteString) + 1);    
         } else{
@@ -63,7 +77,7 @@ void updateTime (EPaper &epaper, WidgetMaster &widgetMaster){
         snprintf(timeString, sizeof(timeString), "%s:%s", hourString, minuteString);
         minCountDown--;
         if(minCountDown == 0){
-            minCountDown = 10;
+            minCountDown = minInterval;
             widgetMaster.cycleWidget(epaper);
         }
         else{

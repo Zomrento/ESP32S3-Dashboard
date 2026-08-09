@@ -3,8 +3,8 @@
 #include "dashboard.h"
 
 /*  Commands:
-      0x00: Help
-      0x01: SetFont
+      0x00: Help                           0x01 0x00
+      0x01: SetFont                        0x02 0x01 
       0x02: DrawString
       0x03: SetTime
     Statuscodes sent on Return:
@@ -20,7 +20,7 @@
 /// @return a int8_t representing the status of the commandexecution
 /// @note for epaper always use the initialized epaper from main.cpp
 
-int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper){
+int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMaster){
     uint8_t cmdLength = cmdArray[0];
     uint8_t cmd = cmdArray[1];
     String text = "";
@@ -86,6 +86,28 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper){
         char new_hour[3] = {(char)cmdArray[2], (char)cmdArray[3], '\0'};
         char new_min[3] = {(char)cmdArray[4], (char)cmdArray[5], '\0'};
         setTime(new_hour, new_min);
+        return 1;
+      }
+      // Updates the Luomi Quote
+      case 0x04:
+      {
+        text = "";
+        for(int i = 2; i < cmdLength + 1; i++){
+          text += (char)cmdArray[i];
+        }
+        widgetMaster.luomiwidget.quote = text;
+        return 1;
+      }
+      // Sets Cycling Countdown Interval and set current timer to that time max 255
+      case 0x05:
+      {
+        setCountdownInterval(cmdArray[2]);
+        return 1;
+      }
+      // Sets current Countdown to given number max 255
+      case 0x06:
+      {
+        setCountdown(cmdArray[2]);
         return 1;
       }
       default:

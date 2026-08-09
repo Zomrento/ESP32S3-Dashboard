@@ -7,3 +7,5 @@ void setTime (char newhour [3], char newminute [3]);
 void drawPartial(EPaper &epaper, String text, unsigned int x, unsigned int y);
 void drawTime(EPaper &epaper, bool partialUpdate = false);
 void updateTime (EPaper &epaper, WidgetMaster &widgetMaster);
+void setCountdown(uint8_t _minCountdown);
+void setCountdownInterval(uint8_t _minInterval);

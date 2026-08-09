@@ -1,6 +1,7 @@
 #include "widgets.h"
 #include "dashboard.h"
 #include "fonts.h"
+#include "img.h"
 
 void TodoWidget::drawWidget(EPaper &epaper){
     epaper.fillScreen(TFT_WHITE);
@@ -38,7 +39,21 @@ void LuomiWidget::drawWidget(EPaper &epaper){
     epaper.setTextDatum(TC_DATUM);
     epaper.fillScreen(TFT_WHITE);
     epaper.drawString("Luomi-Quote", epaper.width()/2, 0);
-    if(sizeof(quote) < 1){
+    if(quote.isEmpty()){
+    /*  epaper.drawBitmap(0,40, luomiMain, 400, 400, TFT_BLACK);
+        epaper.update();
+        for(int i = 10; i > 0; i--){
+            if(i % 2 == 0){
+                epaper.fillRect(170,220,39,20, TFT_WHITE);
+                epaper.drawBitmap(170, 220, luomiMouthOpen, 39, 20, TFT_BLACK);
+            } else{
+                epaper.fillRect(170,220,39,20, TFT_WHITE);
+                epaper.drawBitmap(170, 220, luomiMouthClosed, 39, 20, TFT_BLACK);
+            }
+            epaper.updataPartial(170, 220, 39, 20);
+            delay(1000);
+        }
+    */
         epaper.setFreeFont(&InterTight_VariableFont_wght32pt7b);
         epaper.drawString("WARN: NO QUOTE", epaper.width()/2, epaper.height()/2);
     } else{
@@ -65,6 +80,7 @@ LuomiWidget::LuomiWidget(int8_t _id, String _quote){
 void StartUpWidget::drawWidget(EPaper &epaper){
     int8_t prev = epaper.getTextDatum();
     epaper.setTextDatum(MC_DATUM);
+    epaper.setFreeFont(&InterTight_VariableFont_wght32pt7b);
     epaper.fillScreen(TFT_WHITE);
     epaper.drawString("STARTUP", epaper.width()/2, epaper.height()/2);
     epaper.setTextDatum(prev);
@@ -96,6 +112,10 @@ void WidgetMaster::cycleWidget(EPaper &epaper){
         default:
             current = &startupwidget;
     }
+    current->drawWidget(epaper);
+}
+
+void WidgetMaster::drawCurrent(EPaper &epaper){
     current->drawWidget(epaper);
 }
 
