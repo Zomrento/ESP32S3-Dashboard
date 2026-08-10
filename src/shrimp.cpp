@@ -1,6 +1,7 @@
 #include "shrimp.h"
 #include "fonts.h"
 #include "dashboard.h"
+#include "httpHandler.h"
 
 /*  Commands:
       0x00: Help                           0x01 0x00
@@ -110,6 +111,29 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
         setCountdown(cmdArray[2]);
         return 1;
       }
+      case 0x07:
+      {
+        sendRequest(cmdArray,cmdLength+1);
+        widgetMaster.debugwidget.update();
+        widgetMaster.current = &widgetMaster.debugwidget;
+        widgetMaster.drawCurrent(epaper);
+        return 1;
+      }
+      case 0x08:
+      {
+        sendRequest(cmdArray,cmdLength+1);
+        widgetMaster.debugwidget.update();
+        widgetMaster.current = &widgetMaster.debugwidget;
+        widgetMaster.drawCurrent(epaper);
+        return 1;
+      }
+      case 0x09:
+        sendRequest(cmdArray,cmdLength+1);
+        widgetMaster.debugwidget.update();
+        widgetMaster.current = &widgetMaster.debugwidget;
+        widgetMaster.drawCurrent(epaper);
+        return 1;
+
       default:
         return -1;
     }

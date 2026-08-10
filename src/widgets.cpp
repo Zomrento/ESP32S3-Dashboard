@@ -3,6 +3,7 @@
 #include "fonts.h"
 #include "img.h"
 
+
 void TodoWidget::drawWidget(EPaper &epaper){
     epaper.fillScreen(TFT_WHITE);
     epaper.drawString("Todo-List", 200, 0);
@@ -98,6 +99,57 @@ StartUpWidget::StartUpWidget(int8_t _id){
     type = STARTUP;
 }
 
+DEBUGWidget::DEBUGWidget(){
+    id = -1;
+    type = DEBUG;
+    msg = "NULL";
+    showError = false;
+}
+
+DEBUGWidget::DEBUGWidget(int8_t _id){
+    id = _id;
+    type = DEBUG;
+    msg = "NULL";
+    showError = false;
+}
+
+void DEBUGWidget::setMsg(String _msg){
+    msg = _msg;
+}
+
+void DEBUGWidget::drawError(EPaper &epaper){
+    epaper.drawString(error, epaper.width()/2, epaper.height()/2);
+}
+
+void DEBUGWidget::drawMsg(EPaper &epaper){
+    epaper.drawString("Status:" + status, epaper.width()/2, epaper.height()/4);
+    epaper.drawString("Content-Type:" + typemsg, epaper.width()/2, epaper.height()/2);
+    epaper.drawString(msg, epaper.width()/2, epaper.height()/2+ epaper.height()/4);
+}
+
+void DEBUGWidget::drawWidget(EPaper &epaper){
+    int8_t prev = epaper.getTextDatum();
+    epaper.setTextDatum(MC_DATUM);
+    epaper.setFreeFont(&InterTight_VariableFont_wght24pt7b);
+    epaper.fillScreen(TFT_WHITE);
+    if(showError){
+        drawError(epaper);
+    }
+    else{drawMsg(epaper);
+    }
+    epaper.setTextDatum(prev);
+    drawTime(epaper);
+    epaper.update();
+}
+
+void DEBUGWidget::update(){
+        HTTPResult result = getHTTPResult();
+        error = result.x_error;
+        status = result.statuscode;
+        typemsg = result.contentType;
+        msg = result.content;
+}
+
 void WidgetMaster::cycleWidget(EPaper &epaper){
     switch(current->type){
         case STARTUP:
@@ -108,6 +160,8 @@ void WidgetMaster::cycleWidget(EPaper &epaper){
             break;
         case TODO_LIST:
             current = &luomiwidget;
+            break;
+        case DEBUG:
             break;
         default:
             current = &startupwidget;
@@ -125,5 +179,7 @@ WidgetMaster::WidgetMaster(){
     luomiwidget.id = 1;
     todowidget = TodoWidget();
     todowidget.id = 2;
-    current = &startupwidget;
+    debugwidget = DEBUGWidget();
+    debugwidget.id = 3;
+    current = &debugwidget;
 }

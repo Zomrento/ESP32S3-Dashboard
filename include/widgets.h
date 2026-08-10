@@ -1,12 +1,14 @@
 #pragma once
 #include "TFT_eSPI.h"
+#include "httpHandler.h"
 
 enum WidgetType{
     STARTUP,
     IMAGE,
     TODO_LIST,
     LUOMI_QUOTE,
-    ANIMATION
+    ANIMATION,
+    DEBUG
 };
 
 struct Widget {
@@ -36,11 +38,28 @@ struct StartUpWidget : Widget {
     StartUpWidget(int8_t _id);
 };
 
+struct DEBUGWidget : Widget {
+    HTTPResult result;
+    String typemsg;
+    String msg;
+    String status;
+    String error;
+    bool showError;
+    void update();
+    void drawError(EPaper &epaper);
+    void drawMsg(EPaper &epaper);
+    void drawWidget(EPaper &epaper);
+    void setMsg(String _msg);
+    DEBUGWidget();
+    DEBUGWidget(int8_t _id);
+};
+
 struct WidgetMaster {
     Widget* current;
     StartUpWidget startupwidget;
     TodoWidget todowidget;
     LuomiWidget luomiwidget;
+    DEBUGWidget debugwidget;
     void cycleWidget(EPaper &epaper);
     void drawCurrent(EPaper &epaper);
     WidgetMaster();
