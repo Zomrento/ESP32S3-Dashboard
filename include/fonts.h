@@ -1,4 +1,4 @@
-
+#pragma once
 #include "fonts/BeauRivage_Regular24pt7b.h"
 #include "fonts/BeauRivage_Regular32pt7b.h"
 #include "fonts/PlayfairDisplay_VariableFont_wght18pt7b.h"
