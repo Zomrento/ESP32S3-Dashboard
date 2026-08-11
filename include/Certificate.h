@@ -1,4 +1,5 @@
 #pragma once
+/// @brief Certificate of Root Certification Authority of my Servers Certificate   
 const char* ROOT_CA = R"RAWSTRING(
 -----BEGIN CERTIFICATE-----
 MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw

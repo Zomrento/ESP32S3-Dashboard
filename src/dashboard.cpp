@@ -16,39 +16,33 @@ void setFont(const GFXfont* &font, EPaper &epaper){
     epaper.setFreeFont(font);
 }
 void setCountdown(uint8_t _minCountdown){
-    uint8_t minCountDown = _minCountdown;
+    cycCountDown = _minCountdown;
 }
 
 void setResponseCountDown(int8_t _countdown){
     responseCountDown = _countdown;
 }
 
-void setCountdownInterval(uint8_t _minInterval){
+void setCycleInterval(uint8_t _minInterval){
     cycInterval = _minInterval;
     setCountdown(cycInterval);
 }
 
 void setTime (char newhour [3], char newminute [3]){
-    strcpy(hourString, newhour);
-    strcpy(minuteString, newminute);
+    if(atoi(newhour)< 25){
+        strcpy(hourString, newhour);
+    }
+    if(atoi(newminute)< 61){
+        strcpy(minuteString, newminute);
+    }
 }
 
-/// @brief draws a String and partially updates used space
-/// @param epaper reference to the used epaper-display
-/// @param text String to draw
-/// @param x x-coordinate to draw to
-/// @param y y-coordinate to draw to
-/// @note for epaper always use the initialized epaper from main.cpp
 void drawPartial(EPaper &epaper, String text, unsigned int x, unsigned int y){
     epaper.setTextDatum(TL_DATUM);
     epaper.drawString(text, x, y);
     epaper.updataPartial(x, y, epaper.textWidth(text), epaper.fontHeight());
 }
 
-/// @brief draws the current time on screen
-/// @param epaper reference to the used epaper-display
-/// @param partialUpdate optionally refreshes the used displaypart
-/// @note for epaper always use the initialized epaper from main.cpp
 void drawTime(EPaper &epaper, bool partialUpdate){
     uint8_t prevDatum = epaper.getTextDatum();
     epaper.setTextDatum(TR_DATUM);
@@ -64,9 +58,6 @@ void drawTime(EPaper &epaper, bool partialUpdate){
     epaper.setTextDatum(prevDatum);
 }
 
-/// @brief checks/updates time, then draws it and updates the screen
-/// @param epaper reference to the used epaper-display
-/// @note for epaper always use the initialized epaper from main.cpp
 void updateTime (EPaper &epaper, WidgetMaster &widgetMaster){
     if (millis() -lastTime >= 60000){
         lastTime += 60000;

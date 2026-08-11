@@ -14,13 +14,6 @@
       1: OK, nothing to do
 */
 
-
-/// @brief function to handle shrimp-protocol
-/// @param cmdArray byte array containing CommandID, CommandLength, and Data
-/// @param epaper reference to the used epaper-display
-/// @return a int8_t representing the status of the commandexecution
-/// @note for epaper always use the initialized epaper from main.cpp
-
 int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMaster){
     uint8_t cmdLength = cmdArray[0];
     uint8_t cmd = cmdArray[1];
@@ -102,15 +95,18 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       // Sets Cycling Countdown Interval and set current timer to that time max 255
       case 0x05:
       {
-        setCountdownInterval(cmdArray[2]);
+        setCycleInterval(cmdArray[2]);
         return 1;
       }
       // Sets current Countdown to given number max 255
       case 0x06:
       {
-        setCountdown(cmdArray[2]);
+        setCycle(cmdArray[2]);
         return 1;
       }
+
+      // Sends a query to python server for luomi quote with custom prompt
+      ///@note currently modified for debug purposes
       case 0x07:
       {
         sendRequest(cmdArray,cmdLength+1);
@@ -119,15 +115,21 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
         widgetMaster.drawCurrent(epaper);
         return 1;
       }
+
+      // Sends a query to python server for luomi quote with standard prompt
+      ///@note currently modified for debug purposes
       case 0x08:
       {
         sendRequest(cmdArray,cmdLength+1);
-        setResponseCountDown(5000);
+        setResponseCountDown(10);
         widgetMaster.debugwidget.update();
         widgetMaster.current = &widgetMaster.debugwidget;
         widgetMaster.drawCurrent(epaper);
         return 1;
       }
+
+      // Sends a query to python server to retrieve last generated quote
+      ///@note currently modified for debug purposes
       case 0x09:
         sendRequest(cmdArray,cmdLength+1);
         widgetMaster.debugwidget.update();

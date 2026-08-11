@@ -1,8 +1,20 @@
 //  Under Construction
 //
 //  Roadmap:
-//      Add Screenfullrefresh/screenupdate every 10 min
-//      Add Widget-System
-//      Add Luomi Quote as Widget
-//      Add To-Do list as Widget --  DONE
-//      Add Command to set To-Do list
+//      Add Screenfullrefresh/screenupdate every 10 min -- Done 
+//      Add Widget-System -- Done 
+//      Add Luomi Quote as Widget -- Done 
+//      Add To-Do list as Widget --  Done
+//      Add Command to set To-Do list -- Done 
+//
+//      Debug Serverinteraction
+//      Test and debug all commands again
+//      eat
+//      sleep
+//
+//      decorate startupwidget with img/startup anim
+//      inspect code again and implement failsafes, especially regarding 
+//      datalength with ollama-ai prompts and their responses
+//
+//      note: could it be possible that luomi is an asshole interpretes
+//      at max write x chars as hah lets just write none at all ???
