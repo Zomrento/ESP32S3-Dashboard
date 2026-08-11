@@ -1,12 +1,15 @@
 #include "dashboard.h"
 #include "fonts.h"
+#include "shrimp.h"
 
 char timeString [6] = "XX:XX";
 unsigned long lastTime = 0;
 char hourString [3] = "00";
 char minuteString [3] = "00";
-uint8_t minInterval = 10;
-uint8_t minCountDown = minInterval;
+uint8_t cycInterval = 10;
+uint8_t cycCountDown = cycInterval;
+int8_t responseCountDown = 10;
+byte autoGetRespCMD[2] = {0x01, 0x09};
 
 
 void setFont(const GFXfont* &font, EPaper &epaper){
@@ -17,10 +20,9 @@ void setCountdown(uint8_t _minCountdown){
 }
 
 void setCountdownInterval(uint8_t _minInterval){
-    minInterval = _minInterval;
-    setCountdown(minInterval);
+    cycInterval = _minInterval;
+    setCountdown(cycInterval);
 }
-
 
 void setTime (char newhour [3], char newminute [3]){
     strcpy(hourString, newhour);
@@ -75,15 +77,22 @@ void updateTime (EPaper &epaper, WidgetMaster &widgetMaster){
             }
         }
         snprintf(timeString, sizeof(timeString), "%s:%s", hourString, minuteString);
-        minCountDown--;
-        if(minCountDown == 0){
-            minCountDown = minInterval;
+        if(responseCountDown > 0){
+            responseCountDown--;
+        }
+        else if (responseCountDown == 0)
+        {
+            responseCountDown = -1;
+            shrimpCMD(autoGetRespCMD, epaper, widgetMaster);
+        }
+        cycCountDown--;
+        if(cycCountDown == 0){
+            cycCountDown = cycInterval;
             widgetMaster.cycleWidget(epaper);
         }
         else{
             drawTime(epaper, true);
-        }
-        
+        }  
     }
 }
 
