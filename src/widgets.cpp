@@ -2,6 +2,7 @@
 #include "dashboard.h"
 #include "fonts.h"
 #include "img.h"
+#include "WiFi.h"
 
 
 void TodoWidget::drawWidget(EPaper &epaper){
@@ -130,13 +131,15 @@ void DEBUGWidget::drawMsg(EPaper &epaper){
 void DEBUGWidget::drawWidget(EPaper &epaper){
     int8_t prev = epaper.getTextDatum();
     epaper.setTextDatum(MC_DATUM);
-    epaper.setFreeFont(&InterTight_VariableFont_wght24pt7b);
+    epaper.setFreeFont(&InterTight_VariableFont_wght18pt7b);
     epaper.fillScreen(TFT_WHITE);
     if(showError){
         drawError(epaper);
     }
     else{drawMsg(epaper);
     }
+    epaper.setTextDatum(TL_DATUM);
+    epaper.drawString(WiFi.localIP().toString(), 0, 0);
     epaper.setTextDatum(prev);
     drawTime(epaper);
     epaper.update();
@@ -181,5 +184,5 @@ WidgetMaster::WidgetMaster(){
     todowidget.id = 2;
     debugwidget = DEBUGWidget();
     debugwidget.id = 3;
-    current = &debugwidget;
+    current = &startupwidget;
 }
