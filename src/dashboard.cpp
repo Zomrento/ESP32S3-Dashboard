@@ -8,7 +8,7 @@ char hourString [3] = "00";
 char minuteString [3] = "00";
 uint8_t cycInterval = 10;
 uint8_t cycCountDown = cycInterval;
-int8_t responseCountDown = 10;
+int8_t responseCountDown = -1;
 byte autoGetRespCMD[2] = {0x01, 0x09};
 
 
@@ -17,6 +17,10 @@ void setFont(const GFXfont* &font, EPaper &epaper){
 }
 void setCountdown(uint8_t _minCountdown){
     uint8_t minCountDown = _minCountdown;
+}
+
+void setResponseCountDown(int8_t _countdown){
+    responseCountDown = _countdown;
 }
 
 void setCountdownInterval(uint8_t _minInterval){

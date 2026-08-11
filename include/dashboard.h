@@ -9,3 +9,4 @@ void drawTime(EPaper &epaper, bool partialUpdate = false);
 void updateTime (EPaper &epaper, WidgetMaster &widgetMaster);
 void setCountdown(uint8_t _minCountdown);
 void setCountdownInterval(uint8_t _minInterval);
+void setResponseCountDown(int8_t _countdown);
