@@ -15,7 +15,7 @@ byte autoGetRespCMD[2] = {0x01, 0x09};
 void setFont(const GFXfont* &font, EPaper &epaper){
     epaper.setFreeFont(font);
 }
-void setCountdown(uint8_t _minCountdown){
+void setCycle(uint8_t _minCountdown){
     cycCountDown = _minCountdown;
 }
 
@@ -25,7 +25,7 @@ void setResponseCountDown(int8_t _countdown){
 
 void setCycleInterval(uint8_t _minInterval){
     cycInterval = _minInterval;
-    setCountdown(cycInterval);
+    setCycle(cycInterval);
 }
 
 void setTime (char newhour [3], char newminute [3]){

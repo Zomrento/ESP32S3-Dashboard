@@ -109,6 +109,7 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       ///@note currently modified for debug purposes
       case 0x07:
       {
+        setResponseCountDown(5);
         sendRequest(cmdArray,cmdLength+1);
         widgetMaster.debugwidget.update();
         widgetMaster.current = &widgetMaster.debugwidget;
@@ -121,7 +122,7 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       case 0x08:
       {
         sendRequest(cmdArray,cmdLength+1);
-        setResponseCountDown(10);
+        setResponseCountDown(5);
         widgetMaster.debugwidget.update();
         widgetMaster.current = &widgetMaster.debugwidget;
         widgetMaster.drawCurrent(epaper);

@@ -81,10 +81,10 @@ LuomiWidget::LuomiWidget(int8_t _id, String _quote){
 
 void StartUpWidget::drawWidget(EPaper &epaper){
     int8_t prev = epaper.getTextDatum();
-    epaper.setTextDatum(MC_DATUM);
-    epaper.setFreeFont(&InterTight_VariableFont_wght32pt7b);
+    epaper.setTextDatum(TC_DATUM);
     epaper.fillScreen(TFT_WHITE);
-    epaper.drawString("STARTUP", epaper.width()/2, epaper.height()/2);
+    epaper.setFreeFont(&BeauRivage_Regular32pt7b);
+    epaper.drawString("ESP32S3 EPaper-Dashboard", epaper.width()/2, 0);
     epaper.setTextDatum(prev);
     drawTime(epaper);
     epaper.update();
