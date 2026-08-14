@@ -2,6 +2,10 @@
 #include "TFT_eSPI.h"
 #include "widgets.h"
 
+
+
+String getText(uint8_t start);
+
 /// @brief function to handle shrimp-protocol
 /// @param cmdArray byte array containing CommandID, CommandLength, and Data
 /// @param epaper reference to the used epaper-display

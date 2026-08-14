@@ -3,6 +3,20 @@
 #include "dashboard.h"
 #include "httpHandler.h"
 
+uint8_t cmdArray[255];
+uint8_t cmdLength;
+uint8_t cmd;
+String text;
+
+String getText(uint8_t start){
+  String txt = "";
+  for(int i = start; i < cmdLength + 1; i++){
+          txt += (char)cmdArray[i];
+        }
+  return txt;      
+}
+
+
 /*  Commands:
       0x00: Help                           0x01 0x00
       0x01: SetFont                        0x02 0x01 
@@ -13,18 +27,25 @@
       0: Sent HTTP with commandlist of this specific project to Client (Help)
       1: OK, nothing to do
 */
-
 int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMaster){
-    uint8_t cmdLength = cmdArray[0];
-    uint8_t cmd = cmdArray[1];
-    String text = "";
+    cmdLength = cmdArray[0];
+    cmd = cmdArray[1];
+    text = "";
 
     switch (cmd){
       // Help command
       case 0x00:
+      {
         return 0;
+      }
+      
+      //-------------------------------------------
+      // TEXT COMMANDS
+      //-------------------------------------------
+
       // SetFont command
       case 0x01:
+      {
         switch (cmdArray[2]){
           // i = from 0 to incl. 3: Inter
           case 0:
@@ -62,18 +83,21 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
           break;
         }
         return 1;
+      }
       // DrawText command
       case 0x02:
       {
-        text = "";
         int x = cmdArray[2];
         int y = cmdArray[3];
-        for(int i = 4; i < cmdLength + 1; i++){
-          text += (char)cmdArray[i];
-        }
+        text = getText(4);
         drawPartial(epaper, text, x, y);
         return 1;
       }
+      
+      //-------------------------------------------
+      // TIME COMMANDS
+      //-------------------------------------------
+
       // SetTime command
       case 0x03:
       {
@@ -82,14 +106,10 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
         setTime(new_hour, new_min);
         return 1;
       }
-      // Updates the Luomi Quote
+      // Sets current Countdown to given number max 255
       case 0x04:
       {
-        text = "";
-        for(int i = 2; i < cmdLength + 1; i++){
-          text += (char)cmdArray[i];
-        }
-        widgetMaster.luomiwidget.quote = text;
+        setCycle(cmdArray[2]);
         return 1;
       }
       // Sets Cycling Countdown Interval and set current timer to that time max 255
@@ -98,46 +118,73 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
         setCycleInterval(cmdArray[2]);
         return 1;
       }
-      // Sets current Countdown to given number max 255
+
+      //-------------------------------------------
+      // LUOMI COMMANDS
+      //-------------------------------------------
+      
+      // Set Luomi Quote
       case 0x06:
       {
-        setCycle(cmdArray[2]);
+        text = getText(2);
+        widgetMaster.luomiwidget.quote = text;
         return 1;
       }
-
       // Sends a query to python server for luomi quote with custom prompt
       ///@note currently modified for debug purposes
       case 0x07:
       {
-        setResponseCountDown(5);
         sendRequest(cmdArray,cmdLength+1);
-        widgetMaster.debugwidget.update();
-        widgetMaster.current = &widgetMaster.debugwidget;
-        widgetMaster.drawCurrent(epaper);
+        setResponseCountDown(5);
+        // widgetMaster.debugwidget.update();
+        // widgetMaster.current = &widgetMaster.debugwidget;
+        // widgetMaster.drawCurrent(epaper);
         return 1;
       }
-
       // Sends a query to python server for luomi quote with standard prompt
       ///@note currently modified for debug purposes
       case 0x08:
       {
         sendRequest(cmdArray,cmdLength+1);
         setResponseCountDown(5);
-        widgetMaster.debugwidget.update();
-        widgetMaster.current = &widgetMaster.debugwidget;
-        widgetMaster.drawCurrent(epaper);
+        // widgetMaster.debugwidget.update();
+        // widgetMaster.current = &widgetMaster.debugwidget;
+        // widgetMaster.drawCurrent(epaper);
         return 1;
       }
-
       // Sends a query to python server to retrieve last generated quote
       ///@note currently modified for debug purposes
       case 0x09:
+      {
         sendRequest(cmdArray,cmdLength+1);
-        widgetMaster.debugwidget.update();
-        widgetMaster.current = &widgetMaster.debugwidget;
-        widgetMaster.drawCurrent(epaper);
+        // widgetMaster.debugwidget.update();
+        // widgetMaster.current = &widgetMaster.debugwidget;
+        // widgetMaster.drawCurrent(epaper);
         return 1;
+      }
+      
+      //-------------------------------------------
+      // TODOLIST COMMANDS
+      //-------------------------------------------
 
+      // clears last X todolist entries
+      case 0x10:
+      {
+        widgetMaster.todowidget.removeLast(cmdArray[2]);
+        return 1;
+      }
+      // sets todolist index X to String
+      case 0x11:
+      {
+        widgetMaster.todowidget.setTask(cmdArray[2], getText(3));
+        return 1;
+      }
+      // adds todolist task
+      case 0x12:
+      {
+        widgetMaster.todowidget.addTask(getText(2));
+        return 1;
+      }
       default:
         return -1;
     }

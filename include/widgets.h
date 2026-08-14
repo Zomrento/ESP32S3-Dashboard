@@ -28,6 +28,10 @@ struct TodoWidget : Widget {
     uint8_t taskCount;
     String todolist[8];
     void drawWidget(EPaper &epaper);
+    bool addTask(String _tasks[]);
+    bool addTask(String _task);
+    void setTask(uint8_t index, String _task);
+    void removeLast(uint8_t num);
     TodoWidget();
     TodoWidget(int8_t _id, uint8_t _taskCount, String _todolist[8], EPaper &epaper);
 };

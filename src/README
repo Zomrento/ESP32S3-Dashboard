@@ -7,14 +7,14 @@
 //      Add To-Do list as Widget --  Done
 //      Add Command to set To-Do list -- Done 
 //
-//      Debug Serverinteraction
+//      Debug Serverinteraction -- Done
 //      Test and debug all commands again
-//      eat
-//      sleep
+//      eat -- Done
+//      sleep -- Done
 //
 //      decorate startupwidget with img/startup anim
 //      inspect code again and implement failsafes, especially regarding 
 //      datalength with ollama-ai prompts and their responses
 //
 //      note: could it be possible that luomi is an asshole interpretes
-//      at max write x chars as hah lets just write none at all ???
+//      at max write x chars as hah lets just write none at all ??? -- Nope I was just stupid. Nice guess though.

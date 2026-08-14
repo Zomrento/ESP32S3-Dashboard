@@ -3,24 +3,82 @@
 #include "fonts.h"
 #include "img.h"
 #include "WiFi.h"
+#include "shrimp.h"
 
 
 void TodoWidget::drawWidget(EPaper &epaper){
     epaper.fillScreen(TFT_WHITE);
+    uint8_t prev = epaper.getTextDatum();
+    epaper.setTextDatum(TL_DATUM);
+    epaper.setFreeFont(&InterTight_VariableFont_wght18pt7b);
     epaper.drawString("Todo-List", 200, 0);
-        for (uint8_t i = 0; i < taskCount; i++){
-            epaper.drawString(String(i) + ": " + todolist[i],50, i*50+75);
-            epaper.drawLine(50, epaper.fontHeight()+(i*50)+70, 350, epaper.fontHeight()+(i*50)+70, TFT_BLACK);
+        for (uint8_t i = 0; i < 8; i++){
+            if (!todolist[i].isEmpty()){
+                epaper.drawString(String(i) + ": " + todolist[i],50, i*50+75);
+                epaper.drawLine(50, epaper.fontHeight()+(i*50)+70, 350, epaper.fontHeight()+(i*50)+70, TFT_BLACK);
+            }
         }
+    epaper.setTextDatum(prev);
     drawTime(epaper);
     epaper.update();
+}
+
+bool TodoWidget::addTask(String _tasks[]){
+    for(uint8_t i = 0; i < sizeof(_tasks); i++){
+        for (uint8_t j = i; j < 8; j++){
+            if(todolist[j].isEmpty()){
+                todolist[j] = _tasks[i];
+                break;
+            }
+            // if the inner loop goes to the last index and finds it occupied return false
+            else if (j == 7){
+                return false;
+            }
+        }
+    }
+    // if everythings fine return true
+    return true;
+}
+
+bool TodoWidget::addTask(String _task){
+    for (uint8_t i = 0; i < 8; i++){
+        if(todolist[i].isEmpty()){
+            todolist[i] = _task;
+            break;
+        }
+        // loop goes to the last index and finds it occupied return false
+        else if (i == 7){
+            return false;
+        }
+    }
+    // if everythings fine return true
+    return true;
+}
+
+void TodoWidget::setTask(uint8_t index, String _task){
+    if(index < 8){
+        todolist[index] = _task;
+    }
+}
+
+void TodoWidget::removeLast(uint8_t num){
+    int8_t i = 7;
+    while(i != -1 && num !=0){
+        if(!todolist[i].isEmpty()){
+            todolist[i] = "";
+            num--;
+        }
+        i--;
+    }
 }
 
 TodoWidget::TodoWidget(){
     id = -1;
     taskCount = 0;
-    type = TODO_LIST; 
+    type = TODO_LIST;
 }
+
+
 
 TodoWidget::TodoWidget(int8_t _id, uint8_t _taskCount, String _todolist[8], EPaper &epaper){
     id = _id;
@@ -35,6 +93,7 @@ TodoWidget::TodoWidget(int8_t _id, uint8_t _taskCount, String _todolist[8], EPap
         }
     }
 }
+
 
 void LuomiWidget::drawWidget(EPaper &epaper){
     int8_t prev = epaper.getTextDatum();
@@ -156,19 +215,28 @@ void DEBUGWidget::update(){
 void WidgetMaster::cycleWidget(EPaper &epaper){
     switch(current->type){
         case STARTUP:
+        {
             current = &luomiwidget;
             break;
+        }
         case LUOMI_QUOTE:
+        {
             current = &todowidget;
+            uint8_t cmd[] = {0x01, 0x07};
+            shrimpCMD(cmd, epaper, *this);
             break;
-        case TODO_LIST:
+        }
+        case TODO_LIST:{
             current = &luomiwidget;
             break;
-        case DEBUG:
+        }
+        case DEBUG:{
             break;
-        default:
+        }
+        default:{
             current = &startupwidget;
-    }
+        }
+    }   
     current->drawWidget(epaper);
 }
 
