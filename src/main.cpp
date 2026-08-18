@@ -4,6 +4,7 @@
 #include "Secrets.h"
 #include "fonts.h"
 #include "dashboard.h"
+#include "img.h"
 #include "shrimp.h"
 #include "widgets.h"
 #include "HTML.h"
@@ -47,9 +48,15 @@ epaper.setTextSize(1);
 epaper.fillScreen(TFT_WHITE);
 //widgetMaster.current = &widgetMaster.debugwidget;
 widgetMaster.drawCurrent(epaper);
+
+epaper.drawBitmap(0, 200, smallnyxmischievous, 200, 200, TFT_BLACK);
+epaper.drawBitmap(300, 100, nyxmischievous, 350, 350, TFT_BLACK);
+epaper.update();
+Serial.println(WiFi.localIP());
 }
 
 void loop(){
+Serial.println("Start Loop");
 WiFiClient client = server.available();   // Listen for incoming clients
 if (client) {                             // If a new client connects,
 currentTime = millis();
@@ -86,7 +93,7 @@ while (client.connected() && currentTime - previousTime <= timeoutTime) {  // lo
       }
     }
     else{
-      Serial.println(header);
+      Serial.println(header); 
       if (header.indexOf("POST")>=0){
         if (contentLength != 0)  {
           /* To directly display small changes on the dashboard I make some commands

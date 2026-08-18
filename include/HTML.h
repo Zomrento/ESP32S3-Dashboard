@@ -18,11 +18,13 @@ const char GUIHtml[] = R"rawLiteral(
         let CMDLENGTH = 0x01; 
         let data = new Uint8Array(); 
         let textdata = new Uint8Array(); 
+        let combined = null;
         let packet = null; 
         let offset = 0; 
         let hasText = false; 
         let hasNum1 = false; 
         let hasNum2 = false; 
+        let BYTEARRAY = [];
         const encoder = new TextEncoder(); 
  
         function setTargetIP (){ 
@@ -37,7 +39,15 @@ const char GUIHtml[] = R"rawLiteral(
                 document.getElementById(id).style.display = "none"; 
             } 
              
-        } 
+        }
+
+        function ADDBYTE(){
+            BYTEARRAY.push(Number(document.getElementById("BYTEINPUT").value));
+        }
+
+        function SETTEXT(){
+            text = (document.getElementById("STRINGINPUT").value);
+        }
  
         function setType (_hasText, _hasNum1, _hasNum2){ 
             hasText = _hasText; 
@@ -61,36 +71,48 @@ const char GUIHtml[] = R"rawLiteral(
             CMDBYTE = _CMDBYTE; 
             switch (CMDBYTE){ 
                     case 0x06: 
+                        setVisible("CUSTOM",false);
                         setVisible("databox", true); 
                         setType(true, false, false); 
                         break;
                     case 0x07: 
+                        setVisible("CUSTOM",false);
                         setVisible("databox",false); 
                         setType(false, false, false); 
                         break; 
                     case 0x08: 
+                        setVisible("CUSTOM",false);
                         setVisible("databox",true); 
                         setType(true, false, false); 
                         displayElements(); 
                         break; 
                     case 0x09: 
+                        setVisible("CUSTOM",false);
                         setVisible("databox",false); 
                         setType(false, false, false); 
                         break;
                     case 0x10: 
+                        setVisible("CUSTOM",false);
                         setVisible("databox",true); 
                         setType(false, true, false); 
                         displayElements();
                         break; 
                     case 0x11: 
+                        setVisible("CUSTOM",false);
                         setVisible("databox",true); 
                         setType(true, true, false); 
                         displayElements();
                         break; 
-                    case 0x12: 
+                    case 0x12:
+                        setVisible("CUSTOM",false); 
                         setVisible("databox",true); 
                         setType(true, false, false); 
                         displayElements(); 
+                        break;
+                    case 0xFF:
+                        setVisible("CUSTOM",true);
+                        setVisible("databox",false); 
+                        setType(false, false, false);
                         break; 
                     default: 
                         break; 
@@ -121,42 +143,57 @@ const char GUIHtml[] = R"rawLiteral(
  
         function buildPacket(){ 
             CMDLENGTH = 0x01; 
-            textdata = new Uint8Array(); 
-            if(hasText){ 
-                text = document.getElementById("DataText").value; 
-                textdata = encoder.encode(text) 
-                CMDLENGTH += textdata.length; 
-            } 
-            if(hasNum1){ 
-                num1 = document.getElementById("Num1").value; 
-                if(num1 != ""){ 
-                        CMDLENGTH += 1; 
+            if(CMDBYTE!=0xFF){
+                textdata = new Uint8Array(); 
+                if(hasText){ 
+                    text = document.getElementById("DataText").value; 
+                    textdata = encoder.encode(text) 
+                    CMDLENGTH += textdata.length; 
                 } 
-                else{ 
-                    return false; 
+                if(hasNum1){ 
+                    num1 = document.getElementById("Num1").value; 
+                    if(num1 != ""){ 
+                            CMDLENGTH += 1; 
+                    } 
+                    else{ 
+                        return false; 
+                    } 
                 } 
-            } 
-            if(hasNum2){ 
-                num2 = document.getElementById("Num2").value; 
-                if(num2 != ""){ 
-                        CMDLENGTH += 1; 
+                if(hasNum2){ 
+                    num2 = document.getElementById("Num2").value; 
+                    if(num2 != ""){ 
+                            CMDLENGTH += 1; 
+                    } 
+                    else{ 
+                        return false; 
+                    } 
                 } 
-                else{ 
-                    return false; 
+                data = new Uint8Array(CMDLENGTH - 1); 
+                offset = 0; 
+                if(hasNum1){ 
+                    data[offset] = num1;  
+                    offset++; 
                 } 
-            } 
-            data = new Uint8Array(CMDLENGTH - 1); 
-            offset = 0; 
-            if(hasNum1){ 
-                data[offset] = num1;  
-                offset++; 
-            } 
-            if(hasNum2){ 
-                data[offset] = num2;  
-                offset++; 
-            } 
-            if(hasText){ 
-                data.set(textdata, offset); 
+                if(hasNum2){ 
+                    data[offset] = num2;  
+                    offset++; 
+                } 
+                if(hasText){ 
+                    data.set(textdata, offset); 
+                }
+            }
+            else{
+                data = new Uint8Array(BYTEARRAY);
+                CMDLENGTH += data.length;
+                textdata = encoder.encode(text);
+                CMDLENGTH += textdata.length;
+                combined = new Uint8Array(data.length + textdata.length);
+                combined.set(data, 0);
+                combined.set(textdata, data.length);
+                packet = new Uint8Array(CMDLENGTH); 
+                packet[0] = CMDLENGTH; 
+                packet.set(combined,1);
+                return true; 
             } 
         packet = new Uint8Array(CMDLENGTH + 1); 
         packet[0] = CMDLENGTH; 
@@ -194,6 +231,15 @@ const char GUIHtml[] = R"rawLiteral(
         <button onclick="setCMDBYTE(0x10)">0x10</button> 
         <button onclick="setCMDBYTE(0x11)">0x11</button>  
         <button onclick="setCMDBYTE(0x12)">0x12</button> 
+        <button onclick="setCMDBYTE(0xFF)">FREESTYLE</button> 
+    </div> 
+    <div class ="greybox" id="CUSTOM">
+        <p>BYTE</p> 
+        <input type="text" id="BYTEINPUT">
+        <button onclick="ADDBYTE()">ADDBYTE</button>
+        <p>STRING</p> 
+        <input type="text" id="STRINGINPUT">
+        <button onclick="SETTEXT()">SETTEXT</button> 
     </div> 
     <div class ="greybox" id= "databox">
         <p id="Num1TypeMsg">Integer</p> 

@@ -7,8 +7,9 @@ enum WidgetType{
     STARTUP,
     IMAGE,
     TODO_LIST,
-    LUOMI_QUOTE,
+    QUOTE,
     ANIMATION,
+    JOKE,
     DEBUG
     
 };
@@ -38,11 +39,14 @@ struct TodoWidget : Widget {
 };
 
 /// @brief A Widget-Derivative focusing on displaying responses from my personal AI, Luomi. Mostly sarcastic Comments
-struct LuomiWidget : Widget {
+struct QuoteWidget : Widget {
     String quote;
+    uint8_t quoteType;
+    uint8_t model;
+    void update(u8_t _model, u8_t _type, String _quote);
     void drawWidget(EPaper &epaper);
-    LuomiWidget();
-    LuomiWidget(int8_t _id, String _quote);
+    QuoteWidget();
+    QuoteWidget(int8_t _id, String _quote, u8_t _model);
 };
 
 /// @brief A Widget-Derivative being displayed upon device start
@@ -50,6 +54,15 @@ struct StartUpWidget : Widget {
     void drawWidget(EPaper &epaper);
     StartUpWidget();
     StartUpWidget(int8_t _id);
+};
+
+/// @brief A Widget-Derivative for displaying Jokes
+struct JokeWidget : Widget {
+    String setup;
+    String punchline;
+    void drawWidget(EPaper &epaper);
+    void getJoke();
+    JokeWidget();
 };
 
 /// @brief A Widget-Derivative for displaying useful debug information
@@ -83,10 +96,13 @@ struct DEBUGWidget : Widget {
 /// @brief a struct holding one of each Widget-Derivative to manage their display
 struct WidgetMaster {
     Widget* current;
+    bool cycleBlock;
     StartUpWidget startupwidget;
     TodoWidget todowidget;
-    LuomiWidget luomiwidget;
+    QuoteWidget quotewidget;
     DEBUGWidget debugwidget;
+    JokeWidget jokewidget;
+    void setCycleBlock(EPaper &epaper, bool setTo);
     /// @brief cycles to the next widget
     /// @param epaper EPaper object initialized in main.cpp
     void cycleWidget(EPaper &epaper);

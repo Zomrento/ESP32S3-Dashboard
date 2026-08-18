@@ -94,8 +94,13 @@ TodoWidget::TodoWidget(int8_t _id, uint8_t _taskCount, String _todolist[8], EPap
     }
 }
 
+void QuoteWidget::update(u8_t _model, u8_t _type, String _quote){
+    model = _model;
+    quoteType = _type;
+    quote = _quote;
+}
 
-void LuomiWidget::drawWidget(EPaper &epaper){
+void QuoteWidget::drawWidget(EPaper &epaper){
     int8_t prev = epaper.getTextDatum();
     epaper.setTextDatum(TC_DATUM);
     epaper.fillScreen(TFT_WHITE);
@@ -119,23 +124,67 @@ void LuomiWidget::drawWidget(EPaper &epaper){
         epaper.drawString("WARN: NO QUOTE", epaper.width()/2, epaper.height()/2);
     } else{
         epaper.setFreeFont(&BeauRivage_Regular24pt7b);
-        epaper.drawString(quote, epaper.width()/2, epaper.height()/2);
+        if (model==0x02){
+            epaper.drawString("Nyx:", 50, 0);
+            epaper.drawString(quote, 80, epaper.fontHeight()+5);
+            // Depending on which quoteType is associated with the quote, a diffrent image, 
+            // appropiately for the quotetype needs to be displayed
+
+            switch(quoteType){
+                // Default
+                case 0x00:
+                {
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxtalk, 350, 350, TFT_BLACK);
+                    break;
+                }
+                // Sarcastic
+                case 0x01:
+                {
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxsmoking, 350, 350, TFT_BLACK);
+                    break;
+                }
+                // Tired
+                case 0x02:
+                {
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxsleep, 350, 350, TFT_BLACK);
+                    break;
+                }
+                // Menace
+                case 0x03:
+                {
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxPissed, 350, 350, TFT_BLACK);
+                    break;
+                }
+                // Mischievous
+                case 0x04:
+                {
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxmischievous, 350, 350, TFT_BLACK);
+                    break;
+                }
+
+
+            }
+        }
     }
     epaper.setTextDatum(prev);
     drawTime(epaper);
     epaper.update();
 }
 
-LuomiWidget::LuomiWidget(){
+QuoteWidget::QuoteWidget(){
     id = -1;
-    type = LUOMI_QUOTE; 
+    type = QUOTE; 
     quote = "";
+    model = 0x01;
+    quoteType = 0x00;
 }
 
-LuomiWidget::LuomiWidget(int8_t _id, String _quote){
+QuoteWidget::QuoteWidget(int8_t _id, String _quote, u8_t _model){
     id = _id;
-    type = LUOMI_QUOTE;
+    type = QUOTE;
     quote = _quote;
+    model = _model;
+    quoteType = 0x05;
 }
 
 void StartUpWidget::drawWidget(EPaper &epaper){
@@ -143,9 +192,9 @@ void StartUpWidget::drawWidget(EPaper &epaper){
     epaper.setTextDatum(TC_DATUM);
     epaper.fillScreen(TFT_WHITE);
     epaper.setFreeFont(&BeauRivage_Regular32pt7b);
-    //epaper.drawString("ESP32S3 EPaper-Dashboard", epaper.width()/2, 0);
-    //epaper.setTextDatum(prev);
-    //drawTime(epaper);
+    epaper.drawString("ESP32S3 EPaper-Dashboard", epaper.width()/2, 0);
+    epaper.setTextDatum(prev);
+    drawTime(epaper);
     epaper.update();
 }
 
@@ -157,6 +206,34 @@ StartUpWidget::StartUpWidget(){
 StartUpWidget::StartUpWidget(int8_t _id){
     id = _id;
     type = STARTUP;
+}
+
+
+void JokeWidget::getJoke(){
+    String rawData = sendHTTPRequest("http://official-joke-api.appspot.com/jokes/programming/random");
+    setup = rawData.substring(rawData.indexOf("\"setup\":\"") + 9, rawData.indexOf("\"punchline\": \"")-2);
+    punchline = rawData.substring(rawData.indexOf("\"punchline\":\"") + 13, rawData.indexOf("\"id\":")-2);
+}
+
+void JokeWidget::drawWidget(EPaper &epaper){
+    int8_t prev = epaper.getTextDatum();
+    epaper.setTextDatum(TC_DATUM);
+    epaper.fillScreen(TFT_WHITE);
+    epaper.setFreeFont(&BeauRivage_Regular32pt7b);
+    epaper.drawString("JokeWidget", epaper.width()/2, 0);
+    epaper.setFreeFont(&BeauRivage_Regular24pt7b);
+    epaper.setTextDatum(TL_DATUM);
+    epaper.drawString(setup, 50, 100);
+    epaper.drawString(punchline, 50, 100 + epaper.fontHeight()+20);
+    epaper.setTextDatum(prev);
+    drawTime(epaper);
+    epaper.update();
+
+}
+
+JokeWidget::JokeWidget(){
+    id = -1;
+    getJoke();
 }
 
 DEBUGWidget::DEBUGWidget(){
@@ -213,44 +290,60 @@ void DEBUGWidget::update(){
 }
 
 void WidgetMaster::cycleWidget(EPaper &epaper){
-    switch(current->type){
-        case STARTUP:
-        {
-            current = &luomiwidget;
-            break;
-        }
-        case LUOMI_QUOTE:
-        {
-            current = &todowidget;
-            uint8_t cmd[] = {0x01, 0x07};
-            shrimpCMD(cmd, epaper, *this);
-            break;
-        }
-        case TODO_LIST:{
-            current = &luomiwidget;
-            break;
-        }
-        case DEBUG:{
-            break;
-        }
-        default:{
-            current = &startupwidget;
-        }
-    }   
-    current->drawWidget(epaper);
+    if(!cycleBlock){
+        switch(current->type){
+            case STARTUP:
+            {
+                uint8_t cmd[] = {0x01, 0x07};
+                shrimpCMD(cmd, epaper, *this);
+                current = &todowidget;
+                break;
+            }
+            case TODO_LIST:
+            {
+                jokewidget.getJoke();
+                current = &jokewidget;
+                break;
+            }
+            case JOKE:{
+                current = &quotewidget;
+                break;
+            }
+            case QUOTE:
+            {
+                uint8_t cmd[] = {0x01, 0x07};
+                shrimpCMD(cmd, epaper, *this);
+                current = &todowidget;
+                break;
+            }
+            case DEBUG:{
+                break;
+            }
+            default:{
+                current = &startupwidget;
+            }
+        }   
+        current->drawWidget(epaper);
+    }
 }
 
 void WidgetMaster::drawCurrent(EPaper &epaper){
     current->drawWidget(epaper);
 }
 
+void WidgetMaster::setCycleBlock(EPaper &epaper, bool setTo){
+    cycleBlock = setTo;
+    current->drawWidget(epaper);
+}
+
 WidgetMaster::WidgetMaster(){
     startupwidget = StartUpWidget(0);
-    luomiwidget = LuomiWidget();
-    luomiwidget.id = 1;
+    quotewidget = QuoteWidget();
+    quotewidget.id = 1;
     todowidget = TodoWidget();
     todowidget.id = 2;
     debugwidget = DEBUGWidget();
     debugwidget.id = 3;
     current = &startupwidget;
+    cycleBlock = false;
 }

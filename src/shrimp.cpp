@@ -120,32 +120,34 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       }
 
       //-------------------------------------------
-      // LUOMI COMMANDS
+      // LUOMI/NYX COMMANDS
       //-------------------------------------------
       
-      // Set Luomi Quote
+      // Set Luomi Quote / LLM Quote
       case 0x06:
       {
         text = getText(2);
-        widgetMaster.luomiwidget.quote = text;
+        widgetMaster.quotewidget.quote = text;
         return 1;
       }
-      // Sends a query to python server for luomi quote with custom prompt
+      // Sends a query to python server for luomi quote with standard prompt
+      ///@note Sends a query to python server for a standard prompt with randomized Type and LLM
       ///@note currently modified for debug purposes
       case 0x07:
       {
-        sendRequest(cmdArray,cmdLength+1);
+        sendHTTPSRequest(cmdArray,cmdLength+1);
         setResponseCountDown(5);
         // widgetMaster.debugwidget.update();
         // widgetMaster.current = &widgetMaster.debugwidget;
         // widgetMaster.drawCurrent(epaper);
         return 1;
       }
-      // Sends a query to python server for luomi quote with standard prompt
+      // Sends a query to python server for luomi quote with custom prompt
+      ///@note Sends a query to python server for a custom prompt with the specified LLM 0x01 = Luomi 0x02 = Nyx
       ///@note currently modified for debug purposes
       case 0x08:
       {
-        sendRequest(cmdArray,cmdLength+1);
+        sendHTTPSRequest(cmdArray,cmdLength+1);
         setResponseCountDown(5);
         // widgetMaster.debugwidget.update();
         // widgetMaster.current = &widgetMaster.debugwidget;
@@ -156,7 +158,9 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       ///@note currently modified for debug purposes
       case 0x09:
       {
-        sendRequest(cmdArray,cmdLength+1);
+        sendHTTPSRequest(cmdArray,cmdLength+1);
+        HTTPResult result = getHTTPResult();
+        widgetMaster.quotewidget.update((u8_t)result.content[0], (u8_t)result.content[1], result.content.substring(2));
         // widgetMaster.debugwidget.update();
         // widgetMaster.current = &widgetMaster.debugwidget;
         // widgetMaster.drawCurrent(epaper);
@@ -194,27 +198,53 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
             widgetMaster.current = &widgetMaster.startupwidget;
             break;
           }
-          case 0x01: 
+          case 0xFF: 
           {
             widgetMaster.current = &widgetMaster.debugwidget;
             break;
           }
-          case 0x02: 
-          {
-            widgetMaster.current = &widgetMaster.luomiwidget;
-            break;
-          }
-          case 0x03: 
+          case 0x01: 
           {
             widgetMaster.current = &widgetMaster.todowidget;
             break;
           }
+          case 0x02:
+          {
+            widgetMaster.current = &widgetMaster.jokewidget;
+            break;
+          }
+          case 0x03: 
+          {
+            widgetMaster.current = &widgetMaster.quotewidget;
+            break;
+          }
+          
           default:
           {
             return -1;
           }
         }
         resetCycle();
+        widgetMaster.current->drawWidget(epaper);
+        return 1;
+      }
+      // set widgetMaster cycleBlock
+      case 0x14:
+      {
+        if(cmdArray[2]==0x00){
+          widgetMaster.setCycleBlock(epaper, false);
+        }
+        else if(cmdArray[2]==0xFF){
+          widgetMaster.setCycleBlock(epaper, true);
+        }
+        else{
+          return -1;
+        }
+        return 1;
+      }
+      // drawCurrent Command
+      case 0x15:
+      {
         widgetMaster.current->drawWidget(epaper);
         return 1;
       }
