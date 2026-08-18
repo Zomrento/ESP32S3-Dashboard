@@ -48,16 +48,13 @@ epaper.setTextSize(1);
 epaper.fillScreen(TFT_WHITE);
 //widgetMaster.current = &widgetMaster.debugwidget;
 widgetMaster.drawCurrent(epaper);
-
-epaper.drawBitmap(0, 200, smallnyxmischievous, 200, 200, TFT_BLACK);
-epaper.drawBitmap(300, 100, nyxmischievous, 350, 350, TFT_BLACK);
 epaper.update();
 Serial.println(WiFi.localIP());
 }
 
 void loop(){
-Serial.println("Start Loop");
 WiFiClient client = server.available();   // Listen for incoming clients
+Serial.println(WiFi.localIP());
 if (client) {                             // If a new client connects,
 currentTime = millis();
 previousTime = currentTime;

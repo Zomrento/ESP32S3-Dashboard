@@ -233,7 +233,6 @@ void JokeWidget::drawWidget(EPaper &epaper){
 
 JokeWidget::JokeWidget(){
     id = -1;
-    getJoke();
 }
 
 DEBUGWidget::DEBUGWidget(){
