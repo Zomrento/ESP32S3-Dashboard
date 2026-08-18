@@ -19,6 +19,10 @@ void setCycle(uint8_t _minCountdown){
     cycCountDown = _minCountdown;
 }
 
+void resetCycle(){
+    cycCountDown = cycInterval;
+}
+
 void setResponseCountDown(int8_t _countdown){
     responseCountDown = _countdown;
 }
@@ -82,7 +86,7 @@ void updateTime (EPaper &epaper, WidgetMaster &widgetMaster){
         }
         cycCountDown--;
         if(cycCountDown == 0){
-            cycCountDown = cycInterval;
+            resetCycle();
             widgetMaster.cycleWidget(epaper);
         }
         else{

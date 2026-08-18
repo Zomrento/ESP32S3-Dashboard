@@ -1,3 +1,3 @@
 #pragma once
-#include "img/luomiMainBitmap.h"
-#include "img/luomiMouthBitmap.h"
+#include "img/Luomi.h"
+#include "img/Nyx.h"

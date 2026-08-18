@@ -45,7 +45,7 @@ server.begin();
 epaper.begin();
 epaper.setTextSize(1);
 epaper.fillScreen(TFT_WHITE);
-widgetMaster.current = &widgetMaster.debugwidget;
+//widgetMaster.current = &widgetMaster.debugwidget;
 widgetMaster.drawCurrent(epaper);
 }
 

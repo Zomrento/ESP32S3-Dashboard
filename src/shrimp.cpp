@@ -185,6 +185,39 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
         widgetMaster.todowidget.addTask(getText(2));
         return 1;
       }
+      // set widgetMaster current
+      case 0x13:
+      {
+        switch(cmdArray[2]){
+          case 0x00: 
+          {
+            widgetMaster.current = &widgetMaster.startupwidget;
+            break;
+          }
+          case 0x01: 
+          {
+            widgetMaster.current = &widgetMaster.debugwidget;
+            break;
+          }
+          case 0x02: 
+          {
+            widgetMaster.current = &widgetMaster.luomiwidget;
+            break;
+          }
+          case 0x03: 
+          {
+            widgetMaster.current = &widgetMaster.todowidget;
+            break;
+          }
+          default:
+          {
+            return -1;
+          }
+        }
+        resetCycle();
+        widgetMaster.current->drawWidget(epaper);
+        return 1;
+      }
       default:
         return -1;
     }

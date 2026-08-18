@@ -143,9 +143,9 @@ void StartUpWidget::drawWidget(EPaper &epaper){
     epaper.setTextDatum(TC_DATUM);
     epaper.fillScreen(TFT_WHITE);
     epaper.setFreeFont(&BeauRivage_Regular32pt7b);
-    epaper.drawString("ESP32S3 EPaper-Dashboard", epaper.width()/2, 0);
-    epaper.setTextDatum(prev);
-    drawTime(epaper);
+    //epaper.drawString("ESP32S3 EPaper-Dashboard", epaper.width()/2, 0);
+    //epaper.setTextDatum(prev);
+    //drawTime(epaper);
     epaper.update();
 }
 

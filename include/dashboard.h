@@ -36,6 +36,8 @@ void updateTime (EPaper &epaper, WidgetMaster &widgetMaster);
 /// @param _minCountdown time to set cycleCountdown to
 void setCycle(uint8_t _minCountdown);
 
+void resetCycle();
+
 /// @brief sets default time until next widgetmaster.cycle
 /// @param _minInterval time to set cycleCountdown to
 void setCycleInterval(uint8_t _minInterval);

@@ -10,6 +10,7 @@ enum WidgetType{
     LUOMI_QUOTE,
     ANIMATION,
     DEBUG
+    
 };
 
 /// @brief An abstract struct, defining a drawable window. Its derivatives implement specifics

@@ -1,94 +1,214 @@
-const char GUIHtml[] = R"rawLiteral(
-<!DOCTYPE html>
-<html>
-<head>
-    <script>
-        let targetIP = null;
-        let text = null;
-        let CMDBYTE = null;
-        let CMDLENGTH = 0x01;
-        let data = null;
-        let packet = null;
-        const encoder = new TextEncoder();
-
-        function setTargetIP (){
-            targetIP = document.getElementById("IPTarget").value;
+const char GUIHtml[] = R"rawLiteral( 
+<!DOCTYPE html> 
+<html> 
+<head> 
+    <style>
+        .greybox{
+            background-color : #2f2f2f;
+            border-radius: 5%;
+            border-color: #151515;
         }
-
-        function setText (){
-            text = document.getElementById("DataText").value;
-        }
-
-        function setCMDBYTE (_CMDBYTE){
-            CMDBYTE = _CMDBYTE;
-        }
-        function sendPacket(){
-            fetch(targetIP,{
-            method: "POST",
-            headers:{
-            "Content-Type": "application/x-shrimp",
-            },
-            body: packet
-            }
-            )
-        }
-
-        function buildPacket(hasData = false){
-            if(hasData){
-                data = encoder.encode(text);
-                CMDLENGTH = data.length + 1;
-                packet = new Uint8Array(CMDLENGTH + 1);
-                packet[0] = CMDLENGTH;
-                packet[1] = CMDBYTE;
-                packet.set(data, 2);
-
-            }
-            else{
-                packet = new Uint8Array(CMDLENGTH + 1);
-                packet[0] = CMDLENGTH;
-                packet[1] = CMDBYTE;
-            }
-        }
-
-        function sendShrimpCMD(){
-            if(targetIP && CMDBYTE){
-                switch (CMDBYTE){
-                    case 0x07:
-                        buildPacket();
-                        sendPacket();
+    </style>
+    <script> 
+        let targetIP = null; 
+        let text = ""; 
+        let num1 = ""; 
+        let num2 = ""; 
+        let CMDBYTE = ""; 
+        let CMDLENGTH = 0x01; 
+        let data = new Uint8Array(); 
+        let textdata = new Uint8Array(); 
+        let packet = null; 
+        let offset = 0; 
+        let hasText = false; 
+        let hasNum1 = false; 
+        let hasNum2 = false; 
+        const encoder = new TextEncoder(); 
+ 
+        function setTargetIP (){ 
+            targetIP = document.getElementById("IPTarget").value; 
+        } 
+ 
+        function setVisible (id, state){ 
+            if (state){ 
+                document.getElementById(id).style.display = "block"; 
+            } 
+            else{ 
+                document.getElementById(id).style.display = "none"; 
+            } 
+             
+        } 
+ 
+        function setType (_hasText, _hasNum1, _hasNum2){ 
+            hasText = _hasText; 
+            hasNum1 = _hasNum1; 
+            hasNum2 = _hasNum2; 
+        } 
+ 
+        function displayElements(){ 
+                setVisible("Num1TypeMsg", hasNum1);
+                setVisible("Num1", hasNum1);
+                setVisible("Num2TypeMsg", hasNum2); 
+                setVisible("Num2", hasNum2); 
+                setVisible("TextTypeMsg", hasText); 
+                setVisible("DataText", hasText); 
+        } 
+ 
+        function setCMDBYTE (_CMDBYTE){ 
+            text = ""; 
+            num1 = ""; 
+            num2 = ""; 
+            CMDBYTE = _CMDBYTE; 
+            switch (CMDBYTE){ 
+                    case 0x06: 
+                        setVisible("databox", true); 
+                        setType(true, false, false); 
                         break;
-                    case 0x08:
-                        buildPacket(true);
-                        sendPacket();
+                    case 0x07: 
+                        setVisible("databox",false); 
+                        setType(false, false, false); 
+                        break; 
+                    case 0x08: 
+                        setVisible("databox",true); 
+                        setType(true, false, false); 
+                        displayElements(); 
+                        break; 
+                    case 0x09: 
+                        setVisible("databox",false); 
+                        setType(false, false, false); 
                         break;
-                    case 0x09:
-                        buildPacket();
-                        sendPacket();
-                        break;
-                    case 0x12:
-                        buildPacket(true);
-                        sendPacket();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    </script>
-    <title>DEBUG GUI</title>
-</head>
-<body>
-    <h1>SHRIMP COMMANDS</h1>
+                    case 0x10: 
+                        setVisible("databox",true); 
+                        setType(false, true, false); 
+                        displayElements();
+                        break; 
+                    case 0x11: 
+                        setVisible("databox",true); 
+                        setType(true, true, false); 
+                        displayElements();
+                        break; 
+                    case 0x12: 
+                        setVisible("databox",true); 
+                        setType(true, false, false); 
+                        displayElements(); 
+                        break; 
+                    default: 
+                        break; 
+                } 
+            setVisible("sendingbox",true); 
+            setVisible("successmessage", false); 
+            setVisible("errormessage", false); 
+            setVisible("sendingButton",true); 
+        } 
+ 
+        function sendPacket(){ 
+            if(buildPacket()){ 
+                fetch(targetIP,{ 
+                method: "POST", 
+                headers:{ 
+                "Content-Type": "application/x-shrimp", 
+                }, 
+                body: packet 
+                } 
+                ) 
+                setVisible("successmessage",true); 
+                setVisible("sendingButton",false); 
+            } 
+            else{ 
+                setVisible("errormessage",true); 
+            } 
+        } 
+ 
+        function buildPacket(){ 
+            CMDLENGTH = 0x01; 
+            textdata = new Uint8Array(); 
+            if(hasText){ 
+                text = document.getElementById("DataText").value; 
+                textdata = encoder.encode(text) 
+                CMDLENGTH += textdata.length; 
+            } 
+            if(hasNum1){ 
+                num1 = document.getElementById("Num1").value; 
+                if(num1 != ""){ 
+                        CMDLENGTH += 1; 
+                } 
+                else{ 
+                    return false; 
+                } 
+            } 
+            if(hasNum2){ 
+                num2 = document.getElementById("Num2").value; 
+                if(num2 != ""){ 
+                        CMDLENGTH += 1; 
+                } 
+                else{ 
+                    return false; 
+                } 
+            } 
+            data = new Uint8Array(CMDLENGTH - 1); 
+            offset = 0; 
+            if(hasNum1){ 
+                data[offset] = num1;  
+                offset++; 
+            } 
+            if(hasNum2){ 
+                data[offset] = num2;  
+                offset++; 
+            } 
+            if(hasText){ 
+                data.set(textdata, offset); 
+            } 
+        packet = new Uint8Array(CMDLENGTH + 1); 
+        packet[0] = CMDLENGTH; 
+        packet[1] = CMDBYTE; 
+        packet.set(data, 2); 
+        return true; 
+        } 
+ 
+        function sendShrimpCMD(){ 
+            if(targetIP && CMDBYTE){ 
+                sendPacket(); 
+            } 
+        } 
+    </script> 
+    <title>DEBUG GUI</title> 
+</head> 
+<body> 
+    <h1>SHRIMP COMMANDS</h1> 
     <p>The following buttons will send binary Shrimp Commands to the ESP</p>
-    <input type="text" id="IPTarget">
-    <button onclick="setTargetIP()">setTargetIP</button>
-    <button onclick="setCMDBYTE(0x07)" >0x07</button>
-    <button onclick="setCMDBYTE(0x08)" >0x08</button>
-    <button onclick="setCMDBYTE(0x09)" >0x09</button>
-    <button onclick="setCMDBYTE(0x12)" >0x12</button>
-    <input type="text" id="DataText">
-    <button onclick="setText()">SetText</button>
-    <button onclick="sendShrimpCMD()">SENTPACKET</button>
-</body>
-</html>
+    <p>0x06 SET text as Luomi quote</p>
+    <p>0x07 Luomi Standard Prompt query + auto 0x09 in a few min</p>
+    <p>0x08 Luomi Custom Prompt query + auto 0x09 in a few min</p>     
+    <p>0x09 GET Luomi Prompt Response and update on ESP32</p>
+    <p>0x10 CLEARS last X Todolist Task</p>
+    <p>0x11 SET Todolist Task at given Index</p>
+    <p>0x12 ADD Todolist Task</p>
+    <div class ="greybox"><input type="text" id="IPTarget"> 
+        <button onclick="setTargetIP()">setTargetIP</button> 
+    </div> 
+    <div class ="greybox"> 
+        <button onclick="setCMDBYTE(0x06)">0x06</button> 
+        <button onclick="setCMDBYTE(0x07)">0x07</button> 
+        <button onclick="setCMDBYTE(0x08)">0x08</button> 
+        <button onclick="setCMDBYTE(0x09)">0x09</button>
+        <button onclick="setCMDBYTE(0x10)">0x10</button> 
+        <button onclick="setCMDBYTE(0x11)">0x11</button>  
+        <button onclick="setCMDBYTE(0x12)">0x12</button> 
+    </div> 
+    <div class ="greybox" id= "databox">
+        <p id="Num1TypeMsg">Integer</p> 
+        <input type="number" id="Num1">
+        <p id="Num2TypeMsg">Integer</p> 
+        <input type="number" id="Num2">
+        <p id="TextTypeMsg">String</p> 
+        <input type="text" id="DataText"> 
+    </div> 
+    <div class ="greybox" id = "sendingbox"> 
+        <p id="successmessage">Success</p> 
+        <p id="errormessage">Error. MessagePacket could not be built</p> 
+        <button onclick="sendShrimpCMD()" id="sendingButton">SENTPACKET</button> 
+    </div> 
+         
+</body> 
+</html> 
 )rawLiteral";
