@@ -204,7 +204,9 @@ const char GUIHtml[] = R"rawLiteral(
  
         function sendShrimpCMD(){ 
             if(targetIP && CMDBYTE){ 
-                sendPacket(); 
+                sendPacket();
+                BYTEARRAY = [];
+                text = "";
             } 
         } 
     </script> 

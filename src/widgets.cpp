@@ -124,7 +124,46 @@ void QuoteWidget::drawWidget(EPaper &epaper){
         epaper.drawString("WARN: NO QUOTE", epaper.width()/2, epaper.height()/2);
     } else{
         epaper.setFreeFont(&BeauRivage_Regular24pt7b);
-        if (model==0x02){
+        if (model==0x01){
+            epaper.drawString("Luomi:", 50, 0);
+            epaper.drawString(quote, 80, epaper.fontHeight()+5);
+            // Depending on which quoteType is associated with the quote, a diffrent image, 
+            // appropiately for the quotetype needs to be displayed
+
+            switch(quoteType){
+                // Default
+                case 0x00:
+                {
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxtalk, 350, 350, TFT_BLACK);
+                    break;
+                }
+                // Sarcastic
+                case 0x01:
+                {
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxsmoking, 350, 350, TFT_BLACK);
+                    break;
+                }
+                // Tired
+                case 0x02:
+                {
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxsleep, 350, 350, TFT_BLACK);
+                    break;
+                }
+                // Menace
+                case 0x03:
+                {
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxPissed, 350, 350, TFT_BLACK);
+                    break;
+                }
+                // Mischievous
+                case 0x04:
+                {
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxmischievous, 350, 350, TFT_BLACK);
+                    break;
+                }
+            }
+        }
+        else if (model==0x02){
             epaper.drawString("Nyx:", 50, 0);
             epaper.drawString(quote, 80, epaper.fontHeight()+5);
             // Depending on which quoteType is associated with the quote, a diffrent image, 
@@ -191,8 +230,11 @@ void StartUpWidget::drawWidget(EPaper &epaper){
     int8_t prev = epaper.getTextDatum();
     epaper.setTextDatum(TC_DATUM);
     epaper.fillScreen(TFT_WHITE);
-    epaper.setFreeFont(&BeauRivage_Regular32pt7b);
-    epaper.drawString("ESP32S3 EPaper-Dashboard", epaper.width()/2, 0);
+    epaper.setFreeFont(&PlayfairDisplay_VariableFont_wght32pt7b);
+    epaper.drawString("ESP32S3 EPaper-Dashboard", epaper.width()/2, 50);
+    epaper.setFreeFont(&BeauRivage_Regular24pt7b);
+    epaper.setTextDatum(TL_DATUM);
+    epaper.drawString("by Shrimpmoth", 0, 150);
     epaper.setTextDatum(prev);
     drawTime(epaper);
     epaper.update();
@@ -211,7 +253,7 @@ StartUpWidget::StartUpWidget(int8_t _id){
 
 void JokeWidget::getJoke(){
     String rawData = sendHTTPRequest("http://official-joke-api.appspot.com/jokes/programming/random");
-    setup = rawData.substring(rawData.indexOf("\"setup\":\"") + 9, rawData.indexOf("\"punchline\": \"")-2);
+    setup = rawData.substring(rawData.indexOf("\"setup\":\"") + 9, rawData.indexOf("\"punchline\":\"")-2);
     punchline = rawData.substring(rawData.indexOf("\"punchline\":\"") + 13, rawData.indexOf("\"id\":")-2);
 }
 
@@ -222,9 +264,9 @@ void JokeWidget::drawWidget(EPaper &epaper){
     epaper.setFreeFont(&BeauRivage_Regular32pt7b);
     epaper.drawString("JokeWidget", epaper.width()/2, 0);
     epaper.setFreeFont(&BeauRivage_Regular24pt7b);
-    epaper.setTextDatum(TL_DATUM);
-    epaper.drawString(setup, 50, 100);
-    epaper.drawString(punchline, 50, 100 + epaper.fontHeight()+20);
+    epaper.setTextDatum(TC_DATUM);
+    epaper.drawString(setup, epaper.width()/2, 140);
+    epaper.drawString(punchline, epaper.width()/2, 140 + epaper.fontHeight()+20);
     epaper.setTextDatum(prev);
     drawTime(epaper);
     epaper.update();
@@ -258,11 +300,8 @@ void DEBUGWidget::drawError(EPaper &epaper){
 }
 
 void DEBUGWidget::drawMsg(EPaper &epaper){
-    epaper.drawString("Status:" + status, epaper.width()/2, epaper.height()/4);
-    epaper.drawString("Content-Type:" + typemsg, epaper.width()/2, epaper.height()/2);
-    epaper.drawString(msg, epaper.width()/2, epaper.height()/2+ epaper.height()/4);
+    epaper.drawString(sendHTTPRequest("http://official-joke-api.appspot.com/jokes/programming/random"), epaper.width()/2, epaper.height()/4);
 }
-
 void DEBUGWidget::drawWidget(EPaper &epaper){
     int8_t prev = epaper.getTextDatum();
     epaper.setTextDatum(MC_DATUM);

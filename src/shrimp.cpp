@@ -190,6 +190,7 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
         return 1;
       }
       // set widgetMaster current
+      /// @note Reliable, used it a lot while debugging 
       case 0x13:
       {
         switch(cmdArray[2]){

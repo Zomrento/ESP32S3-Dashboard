@@ -50,11 +50,11 @@ epaper.fillScreen(TFT_WHITE);
 widgetMaster.drawCurrent(epaper);
 epaper.update();
 Serial.println(WiFi.localIP());
+widgetMaster.jokewidget.getJoke();
 }
 
 void loop(){
 WiFiClient client = server.available();   // Listen for incoming clients
-Serial.println(WiFi.localIP());
 if (client) {                             // If a new client connects,
 currentTime = millis();
 previousTime = currentTime;

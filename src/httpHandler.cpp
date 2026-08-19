@@ -24,7 +24,12 @@ HTTPResult::HTTPResult()
 
 String sendHTTPRequest(String _URL){
     httpclient.begin(_URL);
-    return(httpclient.getString());
+    Serial.println(httpclient.GET());
+    String text = httpclient.getString();
+    Serial.println("String is:" + text);
+    httpclient.end();
+    Serial.println("END");
+    return(text);
 }
 
 void sendHTTPSRequest(uint8_t* payload , uint8_t payloadSize){
