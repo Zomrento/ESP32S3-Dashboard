@@ -14,7 +14,8 @@ void TodoWidget::drawWidget(EPaper &epaper){
     epaper.drawString("Todo-List", 200, 0);
         for (uint8_t i = 0; i < 8; i++){
             if (!todolist[i].isEmpty()){
-                epaper.drawString(String(i) + ": " + todolist[i],50, i*50+75);
+                Serial.println(todolist[i]);
+                epaper.drawString((String(i) + ": " + String(todolist[i])),50, i*50+75);
                 epaper.drawLine(50, epaper.fontHeight()+(i*50)+70, 350, epaper.fontHeight()+(i*50)+70, TFT_BLACK);
             }
         }
@@ -23,22 +24,6 @@ void TodoWidget::drawWidget(EPaper &epaper){
     epaper.update();
 }
 
-bool TodoWidget::addTask(String _tasks[]){
-    for(uint8_t i = 0; i < sizeof(_tasks); i++){
-        for (uint8_t j = i; j < 8; j++){
-            if(todolist[j].isEmpty()){
-                todolist[j] = _tasks[i];
-                break;
-            }
-            // if the inner loop goes to the last index and finds it occupied return false
-            else if (j == 7){
-                return false;
-            }
-        }
-    }
-    // if everythings fine return true
-    return true;
-}
 
 bool TodoWidget::addTask(String _task){
     for (uint8_t i = 0; i < 8; i++){

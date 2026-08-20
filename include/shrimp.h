@@ -4,7 +4,7 @@
 
 
 
-String getText(uint8_t start);
+String getText(uint8_t start, uint8_t cmdArray[255], uint8_t cmdLength);
 
 /// @brief function to handle shrimp-protocol
 /// @param cmdArray byte array containing CommandID, CommandLength, and Data

@@ -8,7 +8,7 @@ uint8_t cmdLength;
 uint8_t cmd;
 String text;
 
-String getText(uint8_t start){
+String getText(uint8_t start, uint8_t cmdArray[255], uint8_t cmdLength){
   String txt = "";
   for(int i = start; i < cmdLength + 1; i++){
           txt += (char)cmdArray[i];
@@ -89,7 +89,7 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       {
         int x = cmdArray[2];
         int y = cmdArray[3];
-        text = getText(4);
+        text = getText(4, cmdArray, cmdLength);
         drawPartial(epaper, text, x, y);
         return 1;
       }
@@ -126,7 +126,7 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       // Set Luomi Quote / LLM Quote
       case 0x06:
       {
-        text = getText(2);
+        text = getText(2, cmdArray, cmdLength);
         widgetMaster.quotewidget.quote = text;
         return 1;
       }
@@ -180,13 +180,13 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       // sets todolist index X to String
       case 0x11:
       {
-        widgetMaster.todowidget.setTask(cmdArray[2], getText(3));
+        widgetMaster.todowidget.setTask(cmdArray[2], getText(3, cmdArray, cmdLength));
         return 1;
       }
       // adds todolist task
       case 0x12:
       {
-        widgetMaster.todowidget.addTask(getText(2));
+        widgetMaster.todowidget.addTask(getText(2, cmdArray, cmdLength));
         return 1;
       }
       // set widgetMaster current
