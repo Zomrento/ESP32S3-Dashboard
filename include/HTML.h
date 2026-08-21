@@ -25,6 +25,7 @@ const char GUIHtml[] = R"rawLiteral(
         let hasNum1 = false; 
         let hasNum2 = false; 
         let BYTEARRAY = [];
+        let showCommands = false;
         const encoder = new TextEncoder(); 
  
         function setTargetIP (){ 
@@ -212,16 +213,24 @@ const char GUIHtml[] = R"rawLiteral(
     </script> 
     <title>DEBUG GUI</title> 
 </head> 
-<body> 
+<body>
     <h1>SHRIMP COMMANDS</h1> 
     <p>The following buttons will send binary Shrimp Commands to the ESP</p>
-    <p>0x06 SET text as Luomi quote</p>
-    <p>0x07 Luomi Standard Prompt query + auto 0x09 in a few min</p>
-    <p>0x08 Luomi Custom Prompt query + auto 0x09 in a few min</p>     
-    <p>0x09 GET Luomi Prompt Response and update on ESP32</p>
-    <p>0x10 CLEARS last X Todolist Task</p>
-    <p>0x11 SET Todolist Task at given Index</p>
-    <p>0x12 ADD Todolist Task</p>
+    <div class ="greybox" id="helpbox">
+        <p>0x06 SET text as LLM quote</p>
+        <p>0x07 LLM Standard Prompt query + auto 0x09 in a few min</p>
+        <p>0x08 LLM Custom Prompt query + auto 0x09 in a few min.</p>
+        <p>     MODELBYTE (0x01 Luomi 0x02 Nyx) TEXTBYTE(S)</p>     
+        <p>0x09 GET LLM Prompt Response and update on ESP32</p>
+        <p>0x10 CLEARS last X Todolist Task</p>
+        <p>     INTBYTE</p>
+        <p>0x11 SET Todolist Task at given Index</p>
+        <p>     INDEXBYTE TEXTBYTE(S)</p>
+        <p>0x12 ADD Todolist Task</p>
+        <p>     TEXTBYTE(S)</p>
+        <p>0x13 SET widgetMaster current</p>
+        <p>     0x00 START 0xFF DEBUG 0x01 TODO 0x02 JOKE 0x03 QUOTE</p>
+    </div>
     <div class ="greybox"><input type="text" id="IPTarget"> 
         <button onclick="setTargetIP()">setTargetIP</button> 
     </div> 

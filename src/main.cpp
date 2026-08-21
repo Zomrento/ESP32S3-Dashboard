@@ -71,7 +71,6 @@ while (client.connected() && currentTime - previousTime <= timeoutTime) {  // lo
     if(!header_finished){
       currentLine = client.readStringUntil('\n');   // readLine
       currentLine.trim();                           // get rid of \r 
-      Serial.println(currentLine);                  // DEBUG: printout of received line
       header += currentLine;
       
       // if the currentLine contains the Content-Length, extract that int

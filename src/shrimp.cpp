@@ -136,7 +136,7 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       case 0x07:
       {
         sendHTTPSRequest(cmdArray,cmdLength+1);
-        setResponseCountDown(5);
+        setResponseCountDown(7);
         // widgetMaster.debugwidget.update();
         // widgetMaster.current = &widgetMaster.debugwidget;
         // widgetMaster.drawCurrent(epaper);
@@ -148,7 +148,7 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       case 0x08:
       {
         sendHTTPSRequest(cmdArray,cmdLength+1);
-        setResponseCountDown(5);
+        setResponseCountDown(7);
         // widgetMaster.debugwidget.update();
         // widgetMaster.current = &widgetMaster.debugwidget;
         // widgetMaster.drawCurrent(epaper);
@@ -160,7 +160,7 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       {
         sendHTTPSRequest(cmdArray,cmdLength+1);
         HTTPResult result = getHTTPResult();
-        widgetMaster.quotewidget.update((u8_t)result.content[0], (u8_t)result.content[1], result.content.substring(2));
+        widgetMaster.quotewidget.update(result.content[0], result.content[1], result.content.substring(2));
         // widgetMaster.debugwidget.update();
         // widgetMaster.current = &widgetMaster.debugwidget;
         // widgetMaster.drawCurrent(epaper);
@@ -217,6 +217,11 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
           case 0x03: 
           {
             widgetMaster.current = &widgetMaster.quotewidget;
+            break;
+          }
+          case 0x04: 
+          {
+            widgetMaster.current = &widgetMaster.timewidget;
             break;
           }
           

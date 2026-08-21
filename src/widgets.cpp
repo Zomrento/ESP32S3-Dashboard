@@ -6,6 +6,25 @@
 #include "shrimp.h"
 
 
+
+void StartUpWidget::drawWidget(EPaper &epaper){
+    int8_t prev = epaper.getTextDatum();
+    epaper.setTextDatum(TC_DATUM);
+    epaper.fillScreen(TFT_WHITE);
+    epaper.setFreeFont(&PlayfairDisplay_VariableFont_wght32pt7b);
+    epaper.drawString("ESP32S3 EPaper-Dashboard", epaper.width()/2, 50);
+    epaper.setFreeFont(&BeauRivage_Regular24pt7b);
+    epaper.setTextDatum(TL_DATUM);
+    epaper.drawString("by Shrimpmoth", 0, 150);
+    epaper.setTextDatum(prev);
+    drawTime(epaper);
+    epaper.update();
+}
+
+StartUpWidget::StartUpWidget(){
+    type = STARTUP;
+}
+
 void TodoWidget::drawWidget(EPaper &epaper){
     epaper.fillScreen(TFT_WHITE);
     uint8_t prev = epaper.getTextDatum();
@@ -58,15 +77,13 @@ void TodoWidget::removeLast(uint8_t num){
 }
 
 TodoWidget::TodoWidget(){
-    id = -1;
     taskCount = 0;
     type = TODO_LIST;
 }
 
 
 
-TodoWidget::TodoWidget(int8_t _id, uint8_t _taskCount, String _todolist[8], EPaper &epaper){
-    id = _id;
+TodoWidget::TodoWidget(uint8_t _taskCount, String _todolist[8], EPaper &epaper){
     taskCount = _taskCount;
     type = TODO_LIST;
     if  (taskCount > 8){
@@ -79,17 +96,14 @@ TodoWidget::TodoWidget(int8_t _id, uint8_t _taskCount, String _todolist[8], EPap
     }
 }
 
-void QuoteWidget::update(u8_t _model, u8_t _type, String _quote){
-    model = _model;
-    quoteType = _type;
-    quote = _quote;
-}
-
 void QuoteWidget::drawWidget(EPaper &epaper){
     int8_t prev = epaper.getTextDatum();
     epaper.setTextDatum(TC_DATUM);
     epaper.fillScreen(TFT_WHITE);
+    epaper.setFreeFont(&InterTight_VariableFont_wght32pt7b);
     epaper.drawString("Luomi-Quote", epaper.width()/2, 0);
+    Serial.printf("Quote: %s", (String)quote);
+    Serial.printf("Model: %d",(int)model);
     if(quote.isEmpty()){
     /*  epaper.drawBitmap(0,40, luomiMain, 400, 400, TFT_BLACK);
         epaper.update();
@@ -105,7 +119,6 @@ void QuoteWidget::drawWidget(EPaper &epaper){
             delay(1000);
         }
     */
-        epaper.setFreeFont(&InterTight_VariableFont_wght32pt7b);
         epaper.drawString("WARN: NO QUOTE", epaper.width()/2, epaper.height()/2);
     } else{
         epaper.setFreeFont(&BeauRivage_Regular24pt7b);
@@ -195,51 +208,24 @@ void QuoteWidget::drawWidget(EPaper &epaper){
     epaper.update();
 }
 
+void QuoteWidget::update(u8_t _model, u8_t _type, String _quote){
+    model = _model;
+    quoteType = _type;
+    quote = _quote;
+}
+
 QuoteWidget::QuoteWidget(){
-    id = -1;
     type = QUOTE; 
     quote = "";
     model = 0x01;
     quoteType = 0x00;
 }
 
-QuoteWidget::QuoteWidget(int8_t _id, String _quote, u8_t _model){
-    id = _id;
+QuoteWidget::QuoteWidget( String _quote, u8_t _model){
     type = QUOTE;
     quote = _quote;
     model = _model;
     quoteType = 0x05;
-}
-
-void StartUpWidget::drawWidget(EPaper &epaper){
-    int8_t prev = epaper.getTextDatum();
-    epaper.setTextDatum(TC_DATUM);
-    epaper.fillScreen(TFT_WHITE);
-    epaper.setFreeFont(&PlayfairDisplay_VariableFont_wght32pt7b);
-    epaper.drawString("ESP32S3 EPaper-Dashboard", epaper.width()/2, 50);
-    epaper.setFreeFont(&BeauRivage_Regular24pt7b);
-    epaper.setTextDatum(TL_DATUM);
-    epaper.drawString("by Shrimpmoth", 0, 150);
-    epaper.setTextDatum(prev);
-    drawTime(epaper);
-    epaper.update();
-}
-
-StartUpWidget::StartUpWidget(){
-    id = -1;
-    type = STARTUP;
-}
-
-StartUpWidget::StartUpWidget(int8_t _id){
-    id = _id;
-    type = STARTUP;
-}
-
-
-void JokeWidget::getJoke(){
-    String rawData = sendHTTPRequest("http://official-joke-api.appspot.com/jokes/programming/random");
-    setup = rawData.substring(rawData.indexOf("\"setup\":\"") + 9, rawData.indexOf("\"punchline\":\"")-2);
-    punchline = rawData.substring(rawData.indexOf("\"punchline\":\"") + 13, rawData.indexOf("\"id\":")-2);
 }
 
 void JokeWidget::drawWidget(EPaper &epaper){
@@ -258,35 +244,33 @@ void JokeWidget::drawWidget(EPaper &epaper){
 
 }
 
+void JokeWidget::getJoke(){
+    String rawData = sendHTTPRequest("http://official-joke-api.appspot.com/jokes/programming/random");
+    setup = rawData.substring(rawData.indexOf("\"setup\":\"") + 9, rawData.indexOf("\"punchline\":\"")-2);
+    punchline = rawData.substring(rawData.indexOf("\"punchline\":\"") + 13, rawData.indexOf("\"id\":")-2);
+}
+
 JokeWidget::JokeWidget(){
-    id = -1;
+    type = JOKE;
 }
 
-DEBUGWidget::DEBUGWidget(){
-    id = -1;
-    type = DEBUG;
-    msg = "NULL";
-    showError = false;
+void TimeWidget::drawWidget(EPaper &epaper){
+    uint8_t prevDatum = epaper.getTextDatum();
+    epaper.fillScreen(TFT_WHITE);
+    epaper.setTextDatum(MC_DATUM);
+    epaper.setFreeFont(&PlayfairDisplay_VariableFont_wght32pt7b);
+    epaper.setTextSize(2);
+    epaper.drawString(getTimeString(), epaper.width()/2, epaper.height()/2);
+    epaper.setTextDatum(prevDatum);
+    epaper.setTextSize(1);
+    epaper.update();
 }
 
-DEBUGWidget::DEBUGWidget(int8_t _id){
-    id = _id;
-    type = DEBUG;
-    msg = "NULL";
-    showError = false;
+TimeWidget::TimeWidget(){
+    type = TIME;
 }
 
-void DEBUGWidget::setMsg(String _msg){
-    msg = _msg;
-}
 
-void DEBUGWidget::drawError(EPaper &epaper){
-    epaper.drawString(error, epaper.width()/2, epaper.height()/2);
-}
-
-void DEBUGWidget::drawMsg(EPaper &epaper){
-    epaper.drawString(sendHTTPRequest("http://official-joke-api.appspot.com/jokes/programming/random"), epaper.width()/2, epaper.height()/4);
-}
 void DEBUGWidget::drawWidget(EPaper &epaper){
     int8_t prev = epaper.getTextDatum();
     epaper.setTextDatum(MC_DATUM);
@@ -304,6 +288,25 @@ void DEBUGWidget::drawWidget(EPaper &epaper){
     epaper.update();
 }
 
+DEBUGWidget::DEBUGWidget(){
+    type = DEBUG;
+    msg = "NULL";
+    showError = false;
+}
+
+void DEBUGWidget::setMsg(String _msg){
+    msg = _msg;
+}
+
+void DEBUGWidget::drawError(EPaper &epaper){
+    epaper.drawString(error, epaper.width()/2, epaper.height()/2);
+}
+
+void DEBUGWidget::drawMsg(EPaper &epaper){
+    epaper.drawString(sendHTTPRequest("http://official-joke-api.appspot.com/jokes/programming/random"), epaper.width()/2, epaper.height()/4);
+    epaper.update();
+}
+
 void DEBUGWidget::update(){
         HTTPResult result = getHTTPResult();
         error = result.x_error;
@@ -313,12 +316,12 @@ void DEBUGWidget::update(){
 }
 
 void WidgetMaster::cycleWidget(EPaper &epaper){
+    byte promptCmd[2] = {0x01, 0x07};
     if(!cycleBlock){
         switch(current->type){
             case STARTUP:
             {
-                uint8_t cmd[] = {0x01, 0x07};
-                shrimpCMD(cmd, epaper, *this);
+                shrimpCMD(promptCmd, epaper, *this);
                 current = &todowidget;
                 break;
             }
@@ -334,8 +337,11 @@ void WidgetMaster::cycleWidget(EPaper &epaper){
             }
             case QUOTE:
             {
-                uint8_t cmd[] = {0x01, 0x07};
-                shrimpCMD(cmd, epaper, *this);
+                shrimpCMD(promptCmd, epaper, *this);
+                current = &timewidget;
+                break;
+            }
+            case TIME:{
                 current = &todowidget;
                 break;
             }
@@ -360,13 +366,6 @@ void WidgetMaster::setCycleBlock(EPaper &epaper, bool setTo){
 }
 
 WidgetMaster::WidgetMaster(){
-    startupwidget = StartUpWidget(0);
-    quotewidget = QuoteWidget();
-    quotewidget.id = 1;
-    todowidget = TodoWidget();
-    todowidget.id = 2;
-    debugwidget = DEBUGWidget();
-    debugwidget.id = 3;
     current = &startupwidget;
     cycleBlock = false;
 }

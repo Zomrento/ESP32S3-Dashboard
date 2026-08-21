@@ -5,18 +5,16 @@
 /// @brief A type assosciated as member of Widget objects
 enum WidgetType{
     STARTUP,
-    IMAGE,
     TODO_LIST,
     QUOTE,
-    ANIMATION,
     JOKE,
+    TIME,
     DEBUG
     
 };
 
 /// @brief An abstract struct, defining a drawable window. Its derivatives implement specifics
 struct Widget {
-    int8_t id;
     WidgetType type;
 
     /// @brief abstract function to be implemented ad hoc by all of the structs derivatives
@@ -34,7 +32,7 @@ struct TodoWidget : Widget {
     void setTask(uint8_t index, String _task);
     void removeLast(uint8_t num);
     TodoWidget();
-    TodoWidget(int8_t _id, uint8_t _taskCount, String _todolist[8], EPaper &epaper);
+    TodoWidget(uint8_t _taskCount, String _todolist[8], EPaper &epaper);
 };
 
 /// @brief A Widget-Derivative focusing on displaying responses from my personal AI, Luomi. Mostly sarcastic Comments
@@ -45,14 +43,13 @@ struct QuoteWidget : Widget {
     void update(u8_t _model, u8_t _type, String _quote);
     void drawWidget(EPaper &epaper);
     QuoteWidget();
-    QuoteWidget(int8_t _id, String _quote, u8_t _model);
+    QuoteWidget( String _quote, u8_t _model);
 };
 
 /// @brief A Widget-Derivative being displayed upon device start
 struct StartUpWidget : Widget {
     void drawWidget(EPaper &epaper);
     StartUpWidget();
-    StartUpWidget(int8_t _id);
 };
 
 /// @brief A Widget-Derivative for displaying Jokes
@@ -62,6 +59,12 @@ struct JokeWidget : Widget {
     void drawWidget(EPaper &epaper);
     void getJoke();
     JokeWidget();
+};
+
+/// @brief Widget that just displays the time
+struct TimeWidget : Widget {
+    void drawWidget(EPaper &epaper);
+    TimeWidget();
 };
 
 /// @brief A Widget-Derivative for displaying useful debug information
@@ -89,7 +92,6 @@ struct DEBUGWidget : Widget {
     void setMsg(String _msg);
     void drawWidget(EPaper &epaper);
     DEBUGWidget();
-    DEBUGWidget(int8_t _id);
 };
 
 /// @brief a struct holding one of each Widget-Derivative to manage their display
@@ -99,8 +101,9 @@ struct WidgetMaster {
     StartUpWidget startupwidget;
     TodoWidget todowidget;
     QuoteWidget quotewidget;
-    DEBUGWidget debugwidget;
+    TimeWidget timewidget;
     JokeWidget jokewidget;
+    DEBUGWidget debugwidget;
     void setCycleBlock(EPaper &epaper, bool setTo);
     /// @brief cycles to the next widget
     /// @param epaper EPaper object initialized in main.cpp

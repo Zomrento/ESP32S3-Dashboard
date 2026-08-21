@@ -45,3 +45,7 @@ void setCycleInterval(uint8_t _minInterval);
 /// @brief sets time until querying python-server for shrimpCMD(0x01, 0x09) FETCH RESPONSE
 /// @param _countdown time to set to
 void setResponseCountDown(int8_t _countdown);
+
+/// @brief GET the timeString var 
+/// @return  String variable containing formatted Time
+String getTimeString();

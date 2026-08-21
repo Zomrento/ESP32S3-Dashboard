@@ -12,6 +12,10 @@ int8_t responseCountDown = -1;
 byte autoGetRespCMD[2] = {0x01, 0x09};
 
 
+String getTimeString(){
+    return timeString;
+}
+
 void setFont(const GFXfont* &font, EPaper &epaper){
     epaper.setFreeFont(font);
 }
@@ -90,7 +94,12 @@ void updateTime (EPaper &epaper, WidgetMaster &widgetMaster){
             widgetMaster.cycleWidget(epaper);
         }
         else{
-            drawTime(epaper, true);
+            if(widgetMaster.current == &widgetMaster.timewidget){
+                widgetMaster.current->drawWidget(epaper);
+            }
+            else{
+                drawTime(epaper, true);
+            }
         }  
     }
 }

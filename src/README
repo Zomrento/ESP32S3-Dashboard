@@ -1,9 +1,9 @@
 //  Under Construction
 //
 //  Roadmap:
-//      Add Screenfullrefresh/screenupdate every 10 min -- Done 
+//      Add Screenfullrefresh/screenupdate every 10 min -- Done NOTE: New Default is 5 min
 //      Add Widget-System -- Done 
-//      Add Luomi Quote as Widget -- Done 
+//      Add Luomi Quote as Widget -- Done NOTE: renamed to just "QuoteWidget" 
 //      Add To-Do list as Widget --  Done
 //      Add Command to set To-Do list -- Done 
 //
@@ -12,9 +12,21 @@
 //      eat -- Done
 //      sleep -- Done
 //
-//      decorate startupwidget with img/startup anim
+//      decorate startupwidget with img/startup anim  -- Scratch the anim, did prettify startup a bit though
 //      inspect code again and implement failsafes, especially regarding 
-//      datalength with ollama-ai prompts and their responses
+//      datalength with ollama-ai prompts and their responses -- No or ... well maybe later
+//
+//      Fix the widgets:
+//          Startup: Done
+//          Quote: 
+//          Joke: Done
+//          TodoList: Done
+//          DEBUG: Debug will always spontainously shaped into the form i need
 //
 //      note: could it be possible that luomi is an asshole interpretes
 //      at max write x chars as hah lets just write none at all ??? -- Nope I was just stupid. Nice guess though.
+//
+//      Get rid of unneccesary code
+//      Overwork Shrimp Protocol, maybe to a String style protocol using keywords like shrimp set/get/call/reset/help or flags like -s -g -c -r -h
+//      Add another widget maybe ASCII Lookup Table?
+//      Add one MORE widget over previous one
