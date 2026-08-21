@@ -50,7 +50,6 @@ epaper.fillScreen(TFT_WHITE);
 widgetMaster.drawCurrent(epaper);
 epaper.update();
 Serial.println(WiFi.localIP());
-widgetMaster.jokewidget.getJoke();
 }
 
 void loop(){

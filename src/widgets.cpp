@@ -29,8 +29,9 @@ void TodoWidget::drawWidget(EPaper &epaper){
     epaper.fillScreen(TFT_WHITE);
     uint8_t prev = epaper.getTextDatum();
     epaper.setTextDatum(TL_DATUM);
-    epaper.setFreeFont(&InterTight_VariableFont_wght18pt7b);
+    epaper.setFreeFont(&InterTight_VariableFont_wght24pt7b);
     epaper.drawString("Todo-List", 200, 0);
+    epaper.setFreeFont(&InterTight_VariableFont_wght18pt7b);
         for (uint8_t i = 0; i < 8; i++){
             if (!todolist[i].isEmpty()){
                 Serial.println(todolist[i]);
@@ -101,7 +102,7 @@ void QuoteWidget::drawWidget(EPaper &epaper){
     epaper.setTextDatum(TC_DATUM);
     epaper.fillScreen(TFT_WHITE);
     epaper.setFreeFont(&InterTight_VariableFont_wght32pt7b);
-    epaper.drawString("Luomi-Quote", epaper.width()/2, 0);
+    epaper.drawString("Quote", epaper.width()/2, 0);
     Serial.printf("Quote: %s", (String)quote);
     Serial.printf("Model: %d",(int)model);
     if(quote.isEmpty()){
@@ -123,8 +124,8 @@ void QuoteWidget::drawWidget(EPaper &epaper){
     } else{
         epaper.setFreeFont(&BeauRivage_Regular24pt7b);
         if (model==0x01){
-            epaper.drawString("Luomi:", 50, 0);
-            epaper.drawString(quote, 80, epaper.fontHeight()+5);
+            epaper.drawString("Luomi:", 50, 50);
+            epaper.drawString(quote, 80, epaper.fontHeight()+55);
             // Depending on which quoteType is associated with the quote, a diffrent image, 
             // appropiately for the quotetype needs to be displayed
 
@@ -162,8 +163,8 @@ void QuoteWidget::drawWidget(EPaper &epaper){
             }
         }
         else if (model==0x02){
-            epaper.drawString("Nyx:", 50, 0);
-            epaper.drawString(quote, 80, epaper.fontHeight()+5);
+            epaper.drawString("Nyx:", 50, 50);
+            epaper.drawString(quote, 80, epaper.fontHeight()+55);
             // Depending on which quoteType is associated with the quote, a diffrent image, 
             // appropiately for the quotetype needs to be displayed
 
@@ -216,7 +217,7 @@ void QuoteWidget::update(u8_t _model, u8_t _type, String _quote){
 
 QuoteWidget::QuoteWidget(){
     type = QUOTE; 
-    quote = "";
+    quote = "INITQUOTE";
     model = 0x01;
     quoteType = 0x00;
 }

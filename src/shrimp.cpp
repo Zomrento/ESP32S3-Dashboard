@@ -158,12 +158,14 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       ///@note currently modified for debug purposes
       case 0x09:
       {
+        Serial.println("Start 0x09");
         sendHTTPSRequest(cmdArray,cmdLength+1);
         HTTPResult result = getHTTPResult();
         widgetMaster.quotewidget.update(result.content[0], result.content[1], result.content.substring(2));
         // widgetMaster.debugwidget.update();
         // widgetMaster.current = &widgetMaster.debugwidget;
         // widgetMaster.drawCurrent(epaper);
+        Serial.println("End 0x09");
         return 1;
       }
       
