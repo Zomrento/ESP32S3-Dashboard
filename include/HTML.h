@@ -5,12 +5,12 @@ const char GUIHtml[] = R"rawLiteral(
     <style>
         .greybox{
             background-color : #2f2f2f;
-            border-radius: 5%;
             border-color: #151515;
+            border-width: 5px;
         }
     </style>
     <script> 
-        let targetIP = null; 
+        let target = null; 
         let text = ""; 
         let num1 = ""; 
         let num2 = ""; 
@@ -28,8 +28,8 @@ const char GUIHtml[] = R"rawLiteral(
         let showCommands = false;
         const encoder = new TextEncoder(); 
  
-        function setTargetIP (){ 
-            targetIP = document.getElementById("IPTarget").value; 
+        function setTarget (){ 
+            target = document.getElementById("IPTarget").value; 
         } 
  
         function setVisible (id, state){ 
@@ -108,6 +108,12 @@ const char GUIHtml[] = R"rawLiteral(
                         setVisible("CUSTOM",false); 
                         setVisible("databox",true); 
                         setType(true, false, false); 
+                        displayElements();
+                        break;
+                    case 0x13:
+                        setVisible("CUSTOM",false); 
+                        setVisible("databox",true); 
+                        setType(false, true, false); 
                         displayElements(); 
                         break;
                     case 0xFF:
@@ -126,7 +132,7 @@ const char GUIHtml[] = R"rawLiteral(
  
         function sendPacket(){ 
             if(buildPacket()){ 
-                fetch(targetIP,{ 
+                fetch(target,{ 
                 method: "POST", 
                 headers:{ 
                 "Content-Type": "application/x-shrimp", 
@@ -204,7 +210,7 @@ const char GUIHtml[] = R"rawLiteral(
         } 
  
         function sendShrimpCMD(){ 
-            if(targetIP && CMDBYTE){ 
+            if(target && CMDBYTE){ 
                 sendPacket();
                 BYTEARRAY = [];
                 text = "";
@@ -216,6 +222,8 @@ const char GUIHtml[] = R"rawLiteral(
 <body>
     <h1>SHRIMP COMMANDS</h1> 
     <p>The following buttons will send binary Shrimp Commands to the ESP</p>
+    <p>A few of the more common ones are as selectable as quick FILL-INs</p>
+    <p>But for in depth debugging an unchecked Freestyle SHRIMP-Command packetbuilder is available</p>
     <div class ="greybox" id="helpbox">
         <p>0x06 SET text as LLM quote</p>
         <p>0x07 LLM Standard Prompt query + auto 0x09 in a few min</p>
@@ -232,7 +240,7 @@ const char GUIHtml[] = R"rawLiteral(
         <p>     0x00 START 0xFF DEBUG 0x01 TODO 0x02 JOKE 0x03 QUOTE</p>
     </div>
     <div class ="greybox"><input type="text" id="IPTarget"> 
-        <button onclick="setTargetIP()">setTargetIP</button> 
+        <button onclick="setTarget()">setTargetIP</button> 
     </div> 
     <div class ="greybox"> 
         <button onclick="setCMDBYTE(0x06)">0x06</button> 
@@ -242,6 +250,7 @@ const char GUIHtml[] = R"rawLiteral(
         <button onclick="setCMDBYTE(0x10)">0x10</button> 
         <button onclick="setCMDBYTE(0x11)">0x11</button>  
         <button onclick="setCMDBYTE(0x12)">0x12</button> 
+        <button onclick="setCMDBYTE(0x13)">0x13</button>
         <button onclick="setCMDBYTE(0xFF)">FREESTYLE</button> 
     </div> 
     <div class ="greybox" id="CUSTOM">

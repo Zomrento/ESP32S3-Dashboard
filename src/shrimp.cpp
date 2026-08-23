@@ -18,10 +18,6 @@ String getText(uint8_t start, uint8_t cmdArray[255], uint8_t cmdLength){
 
 
 /*  Commands:
-      0x00: Help                           0x01 0x00
-      0x01: SetFont                        0x02 0x01 
-      0x02: DrawString
-      0x03: SetTime
     Statuscodes sent on Return:
       -1: At least one command not recognized
       0: Sent HTTP with commandlist of this specific project to Client (Help)
@@ -34,10 +30,7 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
 
     switch (cmd){
       // Help command
-      case 0x00:
-      {
-        return 0;
-      }
+      case 0x00: return 0;
       
       //-------------------------------------------
       // TEXT COMMANDS
@@ -48,7 +41,7 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       {
         switch (cmdArray[2]){
           // i = from 0 to incl. 3: Inter
-          case 0:
+          case 0: 
           epaper.setFreeFont(&InterTight_VariableFont_wght12pt7b);
           break;
           case 1:
@@ -137,9 +130,6 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       {
         sendHTTPSRequest(cmdArray,cmdLength+1);
         setResponseCountDown(7);
-        // widgetMaster.debugwidget.update();
-        // widgetMaster.current = &widgetMaster.debugwidget;
-        // widgetMaster.drawCurrent(epaper);
         return 1;
       }
       // Sends a query to python server for luomi quote with custom prompt
@@ -149,23 +139,15 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       {
         sendHTTPSRequest(cmdArray,cmdLength+1);
         setResponseCountDown(7);
-        // widgetMaster.debugwidget.update();
-        // widgetMaster.current = &widgetMaster.debugwidget;
-        // widgetMaster.drawCurrent(epaper);
         return 1;
       }
       // Sends a query to python server to retrieve last generated quote
       ///@note currently modified for debug purposes
       case 0x09:
       {
-        Serial.println("Start 0x09");
         sendHTTPSRequest(cmdArray,cmdLength+1);
-        HTTPResult result = getHTTPResult();
+        HTTPSResult result = getHTTPSResult();
         widgetMaster.quotewidget.update(result.content[0], result.content[1], result.content.substring(2));
-        // widgetMaster.debugwidget.update();
-        // widgetMaster.current = &widgetMaster.debugwidget;
-        // widgetMaster.drawCurrent(epaper);
-        Serial.println("End 0x09");
         return 1;
       }
       
@@ -254,6 +236,13 @@ int8_t shrimpCMD(uint8_t cmdArray[255], EPaper &epaper, WidgetMaster &widgetMast
       case 0x15:
       {
         widgetMaster.current->drawWidget(epaper);
+        return 1;
+      }
+      // flushScreen
+      case 0x16:
+      {
+        epaper.fillScreen(TFT_BLACK);
+        epaper.update();
         return 1;
       }
       default:

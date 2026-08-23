@@ -11,25 +11,13 @@ uint8_t cycCountDown = cycInterval;
 int8_t responseCountDown = -1;
 byte autoGetRespCMD[2] = {0x01, 0x09};
 
+/// SETTER
 
-String getTimeString(){
-    return timeString;
-}
+void setFont(const GFXfont* &font, EPaper &epaper){epaper.setFreeFont(font);}
 
-void setFont(const GFXfont* &font, EPaper &epaper){
-    epaper.setFreeFont(font);
-}
-void setCycle(uint8_t _minCountdown){
-    cycCountDown = _minCountdown;
-}
+void setCycle(uint8_t _minCountdown){cycCountDown = _minCountdown;}
 
-void resetCycle(){
-    cycCountDown = cycInterval;
-}
-
-void setResponseCountDown(int8_t _countdown){
-    responseCountDown = _countdown;
-}
+void setResponseCountDown(int8_t _countdown){responseCountDown = _countdown;}
 
 void setCycleInterval(uint8_t _minInterval){
     cycInterval = _minInterval;
@@ -45,16 +33,25 @@ void setTime (char newhour [3], char newminute [3]){
     }
 }
 
+String getTimeString(){return timeString;}
+
+void resetCycle(){cycCountDown = cycInterval;}
+
+
 void drawPartial(EPaper &epaper, String text, unsigned int x, unsigned int y){
     epaper.setTextDatum(TL_DATUM);
     epaper.drawString(text, x, y);
     epaper.updataPartial(x, y, epaper.textWidth(text), epaper.fontHeight());
 }
 
+/// @brief 
+/// @param epaper 
+/// @param partialUpdate 
 void drawTime(EPaper &epaper, bool partialUpdate){
     uint8_t prevDatum = epaper.getTextDatum();
     epaper.setTextDatum(TR_DATUM);
     epaper.setFreeFont(&InterTight_VariableFont_wght12pt7b);
+    // To account for non MonoSpace Fonts default textwidth to account for is set to "XX:XX"
     epaper.fillRect(epaper.width() - 20 - epaper.textWidth("XX:XX"), 0, epaper.textWidth("XX:XX"), epaper.fontHeight(), TFT_WHITE);
     if(partialUpdate){
         epaper.fillRect(epaper.width() - 20 - epaper.textWidth("XX:XX"), 0, epaper.textWidth("XX:XX"), epaper.fontHeight(), TFT_WHITE);
@@ -65,6 +62,7 @@ void drawTime(EPaper &epaper, bool partialUpdate){
     epaper.drawString(timeString, epaper.width() - 20, 0);
     epaper.setTextDatum(prevDatum);
 }
+
 
 void updateTime (EPaper &epaper, WidgetMaster &widgetMaster){
     if (millis() -lastTime >= 60000){

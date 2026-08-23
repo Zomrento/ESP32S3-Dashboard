@@ -1,24 +1,24 @@
 //  Under Construction
 //
 //  Roadmap:
-//      Add Screenfullrefresh/screenupdate every 10 min -- Done NOTE: New Default is 5 min
+//      Add Screenfullrefresh/screenupdate every 10 min -- Done  -- NOTE: New Default is 5 min
 //      Add Widget-System -- Done 
-//      Add Luomi Quote as Widget -- Done NOTE: renamed to just "QuoteWidget" 
+//      Add Luomi Quote as Widget -- Done -- NOTE: renamed to just "QuoteWidget" since Nyx has been Added 
 //      Add To-Do list as Widget --  Done
 //      Add Command to set To-Do list -- Done 
 //
 //      Debug Serverinteraction -- Done
-//      Test and debug all commands again
+//      Test and debug all commands again -- Done
 //      eat -- Done
 //      sleep -- Done
 //
-//      decorate startupwidget with img/startup anim  -- Scratch the anim, did prettify startup a bit though
+//      decorate startupwidget with img/startup anim  -- Scratch the anim, did prettify startup a bit though -- Done
 //      inspect code again and implement failsafes, especially regarding 
-//      datalength with ollama-ai prompts and their responses -- No or ... well maybe later
+//      datalength with ollama-ai prompts and their responses -- No or ... well maybe later -- Partially done
 //
-//      Fix the widgets:
+//      Fix the widgets: -- Done
 //          Startup: Done
-//          Quote: 
+//          Quote: Done
 //          Joke: Done
 //          TodoList: Done
 //          DEBUG: Debug will always spontainously shaped into the form i need
@@ -26,7 +26,9 @@
 //      note: could it be possible that luomi is an asshole interpretes
 //      at max write x chars as hah lets just write none at all ??? -- Nope I was just stupid. Nice guess though.
 //
-//      Get rid of unneccesary code
-//      Overwork Shrimp Protocol, maybe to a String style protocol using keywords like shrimp set/get/call/reset/help or flags like -s -g -c -r -h
-//      Add another widget maybe ASCII Lookup Table?
-//      Add one MORE widget over previous one
+//      Get rid of unneccesary code -- Done 
+//      Overwork Shrimp Protocol, maybe to a String style protocol using keywords like shrimp set/get/call/reset/help or flags like -s -g -c -r -h -- Better Idea, build Shrimp Protocol Version 2.0, but keep it backward-compatible 
+//      Add another widget maybe ASCII Lookup Table? 
+//      Add one MORE widget over previous one -- Done Time 
+//
+//      Beautified Html a bit 

@@ -25,14 +25,12 @@ struct Widget {
 
 /// @brief A Widget-Derivative focusing on displaying a todolist
 struct TodoWidget : Widget {
-    uint8_t taskCount;
     String todolist[8];
     void drawWidget(EPaper &epaper);
     bool addTask(String _task);
     void setTask(uint8_t index, String _task);
     void removeLast(uint8_t num);
     TodoWidget();
-    TodoWidget(uint8_t _taskCount, String _todolist[8], EPaper &epaper);
 };
 
 /// @brief A Widget-Derivative focusing on displaying responses from my personal AI, Luomi. Mostly sarcastic Comments
@@ -69,7 +67,7 @@ struct TimeWidget : Widget {
 
 /// @brief A Widget-Derivative for displaying useful debug information
 struct DEBUGWidget : Widget {
-    HTTPResult result;
+    HTTPSResult result;
     String typemsg;
     String msg;
     String status;
@@ -104,7 +102,7 @@ struct WidgetMaster {
     TimeWidget timewidget;
     JokeWidget jokewidget;
     DEBUGWidget debugwidget;
-    void setCycleBlock(EPaper &epaper, bool setTo);
+    void setCycleBlock(EPaper &epaper, bool _cycleBlock);
     /// @brief cycles to the next widget
     /// @param epaper EPaper object initialized in main.cpp
     void cycleWidget(EPaper &epaper);

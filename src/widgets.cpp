@@ -16,14 +16,21 @@ void StartUpWidget::drawWidget(EPaper &epaper){
     epaper.setFreeFont(&BeauRivage_Regular24pt7b);
     epaper.setTextDatum(TL_DATUM);
     epaper.drawString("by Shrimpmoth", 0, 150);
-    epaper.setTextDatum(prev);
-    drawTime(epaper);
     epaper.update();
+    delay(3000);
+    epaper.drawString("featuring:", 100, 200);
+    epaper.updataPartial(100, 200, epaper.textWidth("featuring: "), epaper.fontHeight());
+    delay(3000);
+    epaper.drawString("Luomi", 100 + epaper.textWidth("featuring: ") , 200);
+    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, luomiTitle, 350, 350, TFT_BLACK);
+    epaper.updataPartial(100+epaper.textWidth("featuring: "), 200, epaper.textWidth("Luomi"), epaper.fontHeight());
+    epaper.updataPartial(epaper.width()-350, epaper.height()-350, 350, 350);
+    epaper.setTextDatum(prev);
+    drawTime(epaper, true);
+    
 }
 
-StartUpWidget::StartUpWidget(){
-    type = STARTUP;
-}
+StartUpWidget::StartUpWidget(){type = STARTUP;}
 
 void TodoWidget::drawWidget(EPaper &epaper){
     epaper.fillScreen(TFT_WHITE);
@@ -77,25 +84,7 @@ void TodoWidget::removeLast(uint8_t num){
     }
 }
 
-TodoWidget::TodoWidget(){
-    taskCount = 0;
-    type = TODO_LIST;
-}
-
-
-
-TodoWidget::TodoWidget(uint8_t _taskCount, String _todolist[8], EPaper &epaper){
-    taskCount = _taskCount;
-    type = TODO_LIST;
-    if  (taskCount > 8){
-        epaper.drawString("Error: widgets.cpp, taskcount out of range", 150, 200);
-        epaper.update();
-    } else{
-        for(uint8_t i = 0; i < taskCount; i++){
-            todolist[i] = _todolist[i];
-        }
-    }
-}
+TodoWidget::TodoWidget(){type = TODO_LIST;}
 
 void QuoteWidget::drawWidget(EPaper &epaper){
     int8_t prev = epaper.getTextDatum();
@@ -103,61 +92,49 @@ void QuoteWidget::drawWidget(EPaper &epaper){
     epaper.fillScreen(TFT_WHITE);
     epaper.setFreeFont(&InterTight_VariableFont_wght32pt7b);
     epaper.drawString("Quote", epaper.width()/2, 0);
-    Serial.printf("Quote: %s", (String)quote);
-    Serial.printf("Model: %d",(int)model);
+    epaper.setTextDatum(TL_DATUM);
     if(quote.isEmpty()){
-    /*  epaper.drawBitmap(0,40, luomiMain, 400, 400, TFT_BLACK);
-        epaper.update();
-        for(int i = 10; i > 0; i--){
-            if(i % 2 == 0){
-                epaper.fillRect(170,220,39,20, TFT_WHITE);
-                epaper.drawBitmap(170, 220, luomiMouthOpen, 39, 20, TFT_BLACK);
-            } else{
-                epaper.fillRect(170,220,39,20, TFT_WHITE);
-                epaper.drawBitmap(170, 220, luomiMouthClosed, 39, 20, TFT_BLACK);
-            }
-            epaper.updataPartial(170, 220, 39, 20);
-            delay(1000);
-        }
-    */
         epaper.drawString("WARN: NO QUOTE", epaper.width()/2, epaper.height()/2);
     } else{
         epaper.setFreeFont(&BeauRivage_Regular24pt7b);
         if (model==0x01){
             epaper.drawString("Luomi:", 50, 50);
+            if(quote.length()>40){
+                String quote1  = quote.substring(0, 40);
+                String quote2 = quote.substring(40);
+            }
             epaper.drawString(quote, 80, epaper.fontHeight()+55);
             // Depending on which quoteType is associated with the quote, a diffrent image, 
             // appropiately for the quotetype needs to be displayed
-
             switch(quoteType){
                 // Default
                 case 0x00:
                 {
-                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxtalk, 350, 350, TFT_BLACK);
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, luomiDefault, 350, 350, TFT_BLACK);
                     break;
                 }
                 // Sarcastic
                 case 0x01:
                 {
-                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxsmoking, 350, 350, TFT_BLACK);
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, luomiTalk, 350, 350, TFT_BLACK);
                     break;
                 }
                 // Tired
                 case 0x02:
                 {
-                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxsleep, 350, 350, TFT_BLACK);
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, luomiTired, 350, 350, TFT_BLACK);
                     break;
                 }
                 // Menace
                 case 0x03:
                 {
-                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxPissed, 350, 350, TFT_BLACK);
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, luomiAngry, 350, 350, TFT_BLACK);
                     break;
                 }
                 // Mischievous
                 case 0x04:
                 {
-                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, nyxmischievous, 350, 350, TFT_BLACK);
+                    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, luomiSmug, 350, 350, TFT_BLACK);
                     break;
                 }
             }
@@ -251,9 +228,7 @@ void JokeWidget::getJoke(){
     punchline = rawData.substring(rawData.indexOf("\"punchline\":\"") + 13, rawData.indexOf("\"id\":")-2);
 }
 
-JokeWidget::JokeWidget(){
-    type = JOKE;
-}
+JokeWidget::JokeWidget(){type = JOKE;}
 
 void TimeWidget::drawWidget(EPaper &epaper){
     uint8_t prevDatum = epaper.getTextDatum();
@@ -267,9 +242,7 @@ void TimeWidget::drawWidget(EPaper &epaper){
     epaper.update();
 }
 
-TimeWidget::TimeWidget(){
-    type = TIME;
-}
+TimeWidget::TimeWidget(){type = TIME;}
 
 
 void DEBUGWidget::drawWidget(EPaper &epaper){
@@ -289,19 +262,19 @@ void DEBUGWidget::drawWidget(EPaper &epaper){
     epaper.update();
 }
 
+/// DEBUGWIDGET
+/// @brief Do not build any code dependand on DEBUGWidget as its main purpose is
+///        Debugdiagnostics and it will be rewritten as seen fit on the fly
+
 DEBUGWidget::DEBUGWidget(){
     type = DEBUG;
     msg = "NULL";
     showError = false;
 }
 
-void DEBUGWidget::setMsg(String _msg){
-    msg = _msg;
-}
+void DEBUGWidget::setMsg(String _msg){msg = _msg;}
 
-void DEBUGWidget::drawError(EPaper &epaper){
-    epaper.drawString(error, epaper.width()/2, epaper.height()/2);
-}
+void DEBUGWidget::drawError(EPaper &epaper){epaper.drawString(error, epaper.width()/2, epaper.height()/2);}
 
 void DEBUGWidget::drawMsg(EPaper &epaper){
     epaper.drawString(sendHTTPRequest("http://official-joke-api.appspot.com/jokes/programming/random"), epaper.width()/2, epaper.height()/4);
@@ -309,7 +282,7 @@ void DEBUGWidget::drawMsg(EPaper &epaper){
 }
 
 void DEBUGWidget::update(){
-        HTTPResult result = getHTTPResult();
+        HTTPSResult result = getHTTPSResult();
         error = result.x_error;
         status = result.statuscode;
         typemsg = result.contentType;
@@ -357,12 +330,10 @@ void WidgetMaster::cycleWidget(EPaper &epaper){
     }
 }
 
-void WidgetMaster::drawCurrent(EPaper &epaper){
-    current->drawWidget(epaper);
-}
+void WidgetMaster::drawCurrent(EPaper &epaper){current->drawWidget(epaper);}
 
-void WidgetMaster::setCycleBlock(EPaper &epaper, bool setTo){
-    cycleBlock = setTo;
+void WidgetMaster::setCycleBlock(EPaper &epaper, bool _cycleBlock){
+    cycleBlock = _cycleBlock;
     current->drawWidget(epaper);
 }
 
