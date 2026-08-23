@@ -41,7 +41,6 @@ void setup() {
   epaper.fillScreen(TFT_WHITE);
   //widgetMaster.current = &widgetMaster.debugwidget;
   widgetMaster.drawCurrent(epaper);
-  epaper.update();
   Serial.println(WiFi.localIP());
 }
 

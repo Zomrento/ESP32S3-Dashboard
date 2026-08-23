@@ -22,9 +22,9 @@ void StartUpWidget::drawWidget(EPaper &epaper){
     epaper.updataPartial(100, 200, epaper.textWidth("featuring: "), epaper.fontHeight());
     delay(3000);
     epaper.drawString("Luomi", 100 + epaper.textWidth("featuring: ") , 200);
-    epaper.drawBitmap(epaper.width()-350, epaper.height()-350, luomiTitle, 350, 350, TFT_BLACK);
+    epaper.drawBitmap(epaper.width()-350, epaper.height()-367, luomiTitle, 350, 367, TFT_BLACK);
     epaper.updataPartial(100+epaper.textWidth("featuring: "), 200, epaper.textWidth("Luomi"), epaper.fontHeight());
-    epaper.updataPartial(epaper.width()-350, epaper.height()-350, 350, 350);
+    epaper.updataPartial(epaper.width()-350, epaper.height()-367, 350, 367);
     epaper.setTextDatum(prev);
     drawTime(epaper, true);
     
