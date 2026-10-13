@@ -102,8 +102,12 @@ void QuoteWidget::drawWidget(EPaper &epaper){
             if(quote.length()>40){
                 String quote1  = quote.substring(0, 40);
                 String quote2 = quote.substring(40);
+                epaper.drawString(quote1, 80, epaper.fontHeight()+55);
+                epaper.drawString(quote2, 80, 2*epaper.fontHeight()+60);
             }
-            epaper.drawString(quote, 80, epaper.fontHeight()+55);
+            else{
+                epaper.drawString(quote, 80, epaper.fontHeight()+55);
+            }
             // Depending on which quoteType is associated with the quote, a diffrent image, 
             // appropiately for the quotetype needs to be displayed
             switch(quoteType){
@@ -141,7 +145,15 @@ void QuoteWidget::drawWidget(EPaper &epaper){
         }
         else if (model==0x02){
             epaper.drawString("Nyx:", 50, 50);
-            epaper.drawString(quote, 80, epaper.fontHeight()+55);
+            if(quote.length()>40){
+                String quote1  = quote.substring(0, 40);
+                String quote2 = quote.substring(40);
+                epaper.drawString(quote1, 80, epaper.fontHeight()+55);
+                epaper.drawString(quote2, 80, 2*epaper.fontHeight()+60);
+            }
+            else{
+                epaper.drawString(quote, 80, epaper.fontHeight()+55);
+            }
             // Depending on which quoteType is associated with the quote, a diffrent image, 
             // appropiately for the quotetype needs to be displayed
 
