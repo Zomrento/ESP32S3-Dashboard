@@ -7,6 +7,8 @@ In the end the project turned out as a wallmounted [E-Paperdisplay](https://www.
 that periodically changes from widget to widget and displays things  
 like a todo-list, the time, IT jokes, or silly comments from an LLM. 
 
+<img src="/include/img/project.jpg" width="826" height="400">
+
 The following will provide a brief overview over the two main areas 
 
 ## Structure
@@ -84,7 +86,7 @@ there you will find a few quick commands as fill-ins, but I recommend
 to read the shrimp.h and shrimp.cpp and then use the FREESTYLE option
 to address all functions of the EPD by building shrimp commands directly.
 
-<img src="/include/img/image.png" width="200" height="100">
+<img src="/include/img/image.png" width="385" height="503">
 
 ## The Shrimp Protocol
 
