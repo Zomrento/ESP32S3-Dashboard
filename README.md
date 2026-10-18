@@ -84,7 +84,7 @@ there you will find a few quick commands as fill-ins, but I recommend
 to read the shrimp.h and shrimp.cpp and then use the FREESTYLE option
 to address all functions of the EPD by building shrimp commands directly.
 
-![The Shrimp GUI](/include/img/image.png "Shrimp GUI")
+<img src="/include/img/image.png" width="200" height="100">
 
 ## The Shrimp Protocol
 
